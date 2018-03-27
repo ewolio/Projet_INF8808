@@ -66,7 +66,7 @@ var preproccess = function(roadIncident, population, countries){
     for(var country in dict){
         var d_country = [];
         for(var year in dict[country]){
-            var d = {annee: year}
+            var d = {annee: parseInt(year)}
             var country_year_data = dict[country][year];
             for(var item in country_year_data)
                 d[item] = country_year_data[item];
@@ -76,41 +76,4 @@ var preproccess = function(roadIncident, population, countries){
     }
     
     return data;
-}
-
-
-/**
- * 
- * @param x   Scale à definir
- * @param data    Données à afficher
- *                  
- */
-var domainX = function(x, data){
-    var min = d3.min(data, pays => d3.min(pays.data, d=>d.annee));
-    var max = d3.max(data, pays => d3.max(pays.data, d=>d.annee));
-    x.domain([min, max]);
-}
-
-/**
- * 
- * @param y       Scale à definir
- * @param data    Données à afficher
- *                  
- */
-var domainY = function(y, data){
-    var min = d3.min(data, pays => d3.min(pays.data.filter(d=>d['rel all']!=''), d=>d['rel all']));
-    var max = d3.max(data, pays => d3.max(pays.data, d=>d['rel all']));
-    y.domain([min, max]);
-}
-
-
-/**
- * 
- * @param color       Scale à definir
- * @param countries    Données à afficher
- *                  
- */
-var domainColor = function(color, countries){
-    var continents = new Set(Object.keys(countries).map(c=>countries[c].continent));
-    color.domain(continents);
 }

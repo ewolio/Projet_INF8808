@@ -1,0 +1,15 @@
+/***************************************
+*             AXIS FORMAT              *
+ ***************************************/
+
+.ChartArea2D .axis .domain{
+    fill: none;
+    stroke: #111;
+    stroke-width: 1;
+}
+
+.ChartArea2D .axis .tick line{
+    stroke: #222;
+    stroke-width: 0.5;
+}
+
