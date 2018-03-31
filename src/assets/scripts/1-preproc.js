@@ -36,7 +36,7 @@ var preproccessCountries = function(countryInfos){
  *              ]
  *                  
  */
-var preproccess = function(roadIncident, population, countries){
+var preproccess = function(roadIncident, population, PIB, countries){
     var dict = {};
     for(var country in countries)
         dict[country] = {};
@@ -59,6 +59,16 @@ var preproccess = function(roadIncident, population, countries){
         if(country in dict && year in dict[country]){
             var d = dict[country][year];
             items.forEach(function(item){d['abs '+item] = Math.round(d['rel '+item]*pop[item]/1000000);});
+            items.forEach(function(item){d['pop '+item] = Math.round(d['rel '+item]*pop[item]/1000000);});
+        }
+    });
+    
+    PIB.forEach(function(pib){
+        var year = pib['annee'], country = pib['pays'];
+        if(country in dict && year in dict[country]){
+            var d = dict[country][year];
+            d['abs pib'] = parseFloat(pib['PIB']);
+            d['rel pib'] = d['abs pib'] / d['pop all'];
         }
     });
     

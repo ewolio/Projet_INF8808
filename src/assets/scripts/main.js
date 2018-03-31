@@ -10,8 +10,9 @@ var D3=null;
     .defer(d3.csv, "./data/incident.csv")
     .defer(d3.csv, "./data/population.csv")
     .defer(d3.csv, "./data/countryInfos.csv")
+    .defer(d3.csv, "./data/pib.csv")
     .awaitAll(function (error, results) {
-      if (error || results.length !== 3) {
+      if (error || results.length !== 4) {
   
   /***** Chargement des données *****/
         throw error;
@@ -19,14 +20,14 @@ var D3=null;
       var roadIncident = results[0];
       var population = results[1];
       var countryInfos = results[2];
+      var pib = results[3];
 
     /***** Prétraitement des données *****/
       var countries = preproccessCountries(countryInfos);
-      var data = preproccess(roadIncident, population, countries);
+      var data = preproccess(roadIncident, population, pib, countries);
       
     /***** Création des Graphes *****/
     var globalMean = new SimpleLineChart(d3.select('#SVG_globalMean'), 'globalMean');
-    console.log(globalMean);
     globalMean.dataX(d => d.annee).xTitle('Annee');
     globalMean.dataY(d => d!=undefined?d['rel all']:NaN).yTitle('Taux de Mortalité <small>(pour 100 000 habitant)</small>');
     globalMean.seriesName(d => d.pays)

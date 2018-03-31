@@ -92,7 +92,7 @@ jQuery(document).ready(function($){
             nextS.animate({top:0}, DURATION, EASING);
         }
         
-        await sleep(2*DURATION);
+        await sleep(1.2*DURATION);
         prevS.hide();
         }
         
