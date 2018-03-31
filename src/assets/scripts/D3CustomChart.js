@@ -152,6 +152,7 @@ class D3CustomChart{
                                     if(arg==null)
                                         return self['_'+name];
                                     self['_'+name+'Setter'](arg);
+                                    return self;
                         };
         Object.defineProperty(accessor, 'setter', {get: function(){return self['_'+name+'Setter'];},
                                                    set: function(s){self['_'+name+'Setter'] = s;} });

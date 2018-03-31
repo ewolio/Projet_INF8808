@@ -26,11 +26,13 @@ var D3=null;
       
     /***** Création des Graphes *****/
     var globalMean = new SimpleLineChart(d3.select('#SVG_globalMean'), 'globalMean');
-    globalMean.dataX = d => d.annee, globalMean.xTitle = 'Annee';
-    globalMean.dataY = d => d!=undefined?d['rel all']:NaN, globalMean.yTitle = 'Taux de Mortalité <small>(pour 100 000 habitant)</small>';
-    globalMean.seriesName = d => d.pays;
-    globalMean.xAxis.tickFormat(d=>d.toString());
-    globalMean.data = data;
+    console.log(globalMean);
+    globalMean.dataX(d => d.annee).xTitle('Annee');
+    globalMean.dataY(d => d!=undefined?d['rel all']:NaN).yTitle('Taux de Mortalité <small>(pour 100 000 habitant)</small>');
+    globalMean.seriesName(d => d.pays)
+              .xAxis.tickFormat(d=>d.toString());
+              
+    globalMean.data(data);
     });
 
 })(d3, searchBar);

@@ -5,22 +5,15 @@ jQuery(document).ready(function($){
         currentSection = -1,
         animLock=false;
     
-    var w = $(window).width(),
-        h = $(window).height();
-        
     initSections();
         
     captureScrolling();
     
     function initSections(){
-        sections.css('width', toPx(w));
-        sections.css('height', toPx(h));
-        sections.css('position', 'absolute');
-        sections.css("top", toPx(h));
-        sections.hide();
+        sections.css("top", '100%').hide();
         
         var firstSection = sections.first();
-        firstSection.css("top", toPx(0));
+        firstSection.css("top", 0);
         firstSection.show();
         
         currentSection = 0;
@@ -88,14 +81,14 @@ jQuery(document).ready(function($){
             prevS.hide();
             nextS.css('z-index', 1);
         }else{
-        nextS.css('top', prevI<nextI?toPx(+h):toPx(-h));
+        nextS.css('top', prevI<nextI?'100%':'-100%');
         nextS.show();
         
         if(prevI < nextI){
-            prevS.animate({top:-h}, DURATION, EASING);
+            prevS.animate({top:'-100%'}, DURATION, EASING);
             nextS.animate({top:0}, DURATION, EASING);
         }else{
-            prevS.animate({top:+h}, DURATION, EASING);
+            prevS.animate({top:'100%'}, DURATION, EASING);
             nextS.animate({top:0}, DURATION, EASING);
         }
         

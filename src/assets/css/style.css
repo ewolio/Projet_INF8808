@@ -74,26 +74,3 @@ body {
 #search-bar > button img {
   height: 18px;
 }
-0
-
-/***** SVG *****/
-.axis {
-  shape-rendering: crispEdges
-}
-
-.axis line {
-  display: none;
-}
-
-.axis path {
-  fill: none;
-  stroke: black;
-  shape-rendering: crispEdges;
-}
-
-.y.axis path {
-  fill: none;
-  stroke: black;
-  stroke-width: 1.5;
-  shape-rendering: crispEdges;
-}
