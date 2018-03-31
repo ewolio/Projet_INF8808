@@ -3,27 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <title>Accidents mortels de la route</title>
+  <link rel="stylesheet" href="assets/css/d3-tip.css">
   <link rel="stylesheet" href="assets/css/auto-complete.css">
-  <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/CustomChart.css">
+  <link rel="stylesheet" href="assets/css/ScrollingSlideTransition.css">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
     
-    <div class='titleBox'>
-    <h1> Accidents mortels de la route</h1>
-    </div>
+    <section class='slide' title='#Accidents routiers mortels'>
+        <div class='titleBox'>
+            <h1> Accidents mortels de la route</h1>
+        </div>
 
-    <div id="panel">
-        <svg></svg>
+        <div class="panel">
+            <p> Story telling </p>
+        </div>
+    </section>
+
+    <section class='slide' title='Moyenne mondiale'>
+        <div class='titleBox'>
+            <h1> Accidents mortels de la route</h1>
+        </div>
+
+        <div class="panel">
+            <svg id='SVG_globalMean'></svg>
+        </div>
+    </section>
+    
+    <section class='slide' title='#Focus sur la France'>
+        <div class='titleBox'>
+            <h1> En France</h1>
+        </div>
+
+        <div class="panel">
+            <svg id='SVG_france'></svg>
+        </div>
+    </section>
+    
+    <section class='slide' title='Évolution législatives' transition='fade'>
+        <div class='titleBox'>
+            <h1> En France </h1>
+        </div>
+
+        <div class="panel">
+            <svg id='SVG_legislation'></svg>
+        </div>
+    </section>
+
+    <section class='slide' title='Évolution techniques' transition='fade'>
+        <div class='titleBox'>
+            <h1> En France </h1>
+        </div>
+
+        <div class="panel">
+            <svg id='SVG_techniques'></svg>
+        </div>
+    </section>
+    
+    <section class='slide' title='#Mortalité routière et PIB'>
+        <div class='titleBox'>
+            <h1> Mortalité routière et PIB </h1>
+        </div>
+
+        <div class="panel">
+            <svg id='SVG_PIB'></svg>
+        </div>
+    </section>
+    
+    <section class='slide' title='Mortalité routière mondiale'>
+        <div class='titleBox'>
+            <h1> Mortalité routière dans le monde </h1>
+        </div>
+
+        <div class="panel">
+            <svg id='SVG_global'></svg>
+        </div>
+    </section>
+    
+    <div id='outerSlideSelector'>
+    <div id='slideSelector'></div>
     </div>
     
   <script type="text/javascript" src="assets/libs/d3.v3.js"></script>
   <script type="text/javascript" src="assets/libs/d3-queue.v3.min.js"></script>
+  <script type="text/javascript" src="assets/libs/d3-tip.js"></script>
   <script type="text/javascript" src="assets/libs/auto-complete.min.js"></script>
   <script type="text/javascript" src="assets/libs/search-bar.js"></script>
+  <script type="text/javascript" src="assets/libs/jquery-2.1.4.js"></script>
   
   <script type="text/javascript" src="assets/scripts/utils.js"></script>
   
+  <script type="text/javascript" src="assets/scripts/ScrollingSlideTransition.js"></script>
+  <script type="text/javascript" src="assets/scripts/D3CustomChart.js"></script>
   <script type="text/javascript" src="assets/scripts/ChartArea2D.js"></script>
   <script type="text/javascript" src="assets/scripts/SimpleLineChart.js"></script>
   

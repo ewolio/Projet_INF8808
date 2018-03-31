@@ -1,4 +1,17 @@
 /***************************************
+*             Chart Area              *
+ ***************************************/
+
+.ChartArea2D .areaBackground{
+    opacity: 0;
+}
+
+.ChartArea2D .chartData{
+    pointer-events: bounding-box;
+}
+
+
+/***************************************
 *             AXIS FORMAT              *
  ***************************************/
 
@@ -10,6 +23,35 @@
 
 .ChartArea2D .axis .tick line{
     stroke: #222;
+    stroke-width: 1;
+}
+
+/***************************************
+ *            CHART LINE               *
+ ***************************************/
+
+.chartLine{
+    stroke: #777;
     stroke-width: 0.5;
 }
 
+.chartLine.hovered{
+    stroke: #111;
+    stroke-width: 0.5; 
+}
+
+/***************************************
+*             CURSOR FORMAT              *
+ ***************************************/
+
+.SimpleLineChart .vCursor{
+    stroke: #222;
+    stroke-width: 0.2;
+}
+
+
+.SimpleLineChart .circleCursor{
+    stroke: #222;
+    stroke-width: 2;
+    fill: white;
+}

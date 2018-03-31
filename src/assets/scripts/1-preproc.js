@@ -70,7 +70,8 @@ var preproccess = function(roadIncident, population, countries){
             var country_year_data = dict[country][year];
             for(var item in country_year_data)
                 d[item] = country_year_data[item];
-            d_country.push(d)
+            if(!isNaN(d['rel all']))
+                d_country.push(d)
         }
         data.push({pays: country, data: d_country});
     }

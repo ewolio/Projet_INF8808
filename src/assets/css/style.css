@@ -4,9 +4,6 @@ body {
   text-align: center;
 }
 
-.error {
-  color: #914141;
-}
 
 .titleBox {
   position: absolute;
@@ -21,17 +18,17 @@ body {
     color: #fff;
 }
 
-#panel {
+.panel {
   position: absolute;
   top: 105px;
   right: 0;
   bottom: 0;
-  left: 0;
+  left: 25px;
   background-color: #fff;
   padding: 10px;
 }
 
-#panel svg{
+.panel svg{
     width: 100%;
     height: 100%;
 }
@@ -99,45 +96,4 @@ body {
   stroke: black;
   stroke-width: 1.5;
   shape-rendering: crispEdges;
-}
-
-.selected {
-  animation: flash-animation 0.8s ease-out infinite;
-  animation-direction: alternate;
-}
-
-@keyframes flash-animation {
-  from {
-    fill-opacity: 0.8;
-  }
-  to {
-    fill-opacity: 0.1;
-  }
-}
-
-/***** Tooltip *****/
-.tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black;
-}
-
-.tooltip .tooltiptext {
-    visibility: visible;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-    top: -5px;
-    left: 50%;
-}
-
-.tooltip:hover .tooltiptext {
-    visibility: visible;
 }

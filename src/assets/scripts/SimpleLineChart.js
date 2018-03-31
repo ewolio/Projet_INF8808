@@ -15,54 +15,109 @@
 */
 
 class SimpleLineChart extends ChartArea2D{
-    constructor(canva, name){
-        super(canva, name);
+    constructor(canva, name, chartType=[]){
+        chartType.unshift('SimpleLineChart');
+        super(canva, name, chartType);
+        var self = this;
         
         // D3 functions components
         this.d3Line = d3.svg.line()
-                        .x(d => this.x(this.xCoord(d)))
-                        .y(d => this.y(this.yCoord(d)))
-                        .interpolate("basis");
+                        .x(d => this.x(this._dataX(d)))
+                        .y(d => this.y(this._dataY(d)))
+                        .interpolate("cardinal");
                         
-        this._lineColor = d => d.color!==undefined ? d.color : '#444'; 
-        this._lineWidth = d => d.width!==undefined ? d.width : 0.5; 
+        this.chainableFunctionProperty('lineColor', d => d.color!==undefined ? d.color : '#444', 'draw'); 
+        this.chainableFunctionProperty('lineWidth', d => d.width!==undefined ? d.width : 0.5, 'draw'); 
+        this.chainableFunctionProperty('htmlTip', d => this.defaultHtmlTip(d), 
+                                       function(){self.tip.html(self._htmlTip);});
+        this.tip.html(this._htmlTip);
+        
+        this.hoveredSerie = null;
+        this.circleCursorGroup = this.gData.append('g');
+        this.circleCursor = this.circleCursorGroup.append('circle').classed('circleCursor', true)
+                                                  .attr('visibility', 'hidden')
+                                                  .attr('r', 2);
+                                                       
+        this.tipRootElement = this.circleCursorGroup;
+                                    
     }
     
-    drawData(g){
+    drawData(g, data){
         var lines = g.selectAll('path')
-                     .data(this.data);
+                     .data(data);
                      
         lines.exit().remove(); // Remove old lines
-        var newLines = lines.enter().append('path')
+        var newLines = lines.enter().append('path').classed('chartLine', true)
                                     .attr('fill', 'none');
-                     
-        lines.attr('d', d => this.d3Line(this.seriesData(d)))
-             .attr('stroke', this.lineColor)
-             .attr('stroke-width', this.lineWidth);
+         
+        var self = this;
+        lines.attr('d', d => this.d3Line(this._seriesData(d)))
+             .attr('stroke', this._lineColor)
+             .attr('stroke-width', this._lineWidth);
     }
     
-    set lineColor(c){
-        this.lockDraw();
-        if(isfunction(c))
-            this._lineColor = c;
-        else
-            this._lineColor = d => c;
-        this.releaseDraw(draw=true);
+    hoverNearestData(mousePos){
+        var paths = this.gData.selectAll('path');
+        
+        if(mousePos !== null){
+            var mouseX = mousePos[0], mouseY = mousePos[1];
+            
+            
+            var self = this;
+            var closestPoints = paths.data().map(function(d){
+                var serieData = self._seriesData(d);
+                var dataX = serieData.map(self._dataX);
+                var nextXi = D3.bisectLeft(dataX.map(self.x), mouseX);
+                var nextX = self.x(dataX[nextXi]), previousX = previousX;
+                if(nextXi > 0)
+                    previousX = self.x(dataX[nextXi-1]);
+                
+                var nearestXi = Math.abs(nextX-mouseX) <= Math.abs(previousX-mouseX) ? nextXi : nextXi-1;
+                
+                var nearestX = dataX[nearestXi];
+                var nearestY = self._dataY(serieData[nearestXi]);
+                
+                return {i: nearestXi, dataX: nearestX, dataY: nearestY, screenX: self.x(nearestX), screenY: self.y(nearestY), serieName: self._seriesName(d)};
+            });
+            
+            var distance = d => (d.screenX-mouseX)**2 + (d.screenY-mouseY)**2;
+            
+            var p = closestPoints[argmin(closestPoints.map(distance))];
+            
+            if(distance(p) < 50**2){
+                this.circleCursorGroup.attr('transform', 'translate('+p.screenX+', '+p.screenY+')');
+                this.vCursor.attr('x1', p.screenX).attr('x2', p.screenX);
+                
+                if(this.hoveredSerie == null){
+                    this.circleCursor.attr('visibility', 'visible');
+                }
+                else if(this.hoveredSerie != p.serieName){
+                    var previousPath = paths.filter(d=>self._seriesName(d)==this.hoveredSerie);
+                }
+                
+                paths.classed('hovered', false);
+                var newPath = paths.filter(d=>self._seriesName(d)==p.serieName);
+                newPath.classed('hovered', true);
+                this.hoveredSerie = p.serieName;
+                
+                this.tip.show(p, this.circleCursor);
+                return;
+            }
+        }
+        
+        this.hoveredSerie = null;
+        paths.classed('hovered', false);
+        this.circleCursor.attr('visibility', 'hidden');
+        this.tip.hide();
     }
-    get lineColor(){
-        return this._lineColor;
+    
+    defaultHtmlTip(data){
+        return `
+            <h3>  %x </h3>
+            <p><b>%n</b>: %y</p>
+        `.replace('%n', data.serieName)
+        .replace('%x', data.dataX)
+        .replace('%y', D3.format('f.1')(data.dataY));
     }
-
-    set lineWidth(w){
-        this.lockDraw();
-        if(isfunction(w))
-            this._lineWidth = w;
-        else
-            this._lineWidth = d => w;
-        this._lineWidth = w;
-        this.releaseDraw(draw=true);
-    }
-    get lineWidth(){
-        return this._lineWidth;
-    }
+    
 }

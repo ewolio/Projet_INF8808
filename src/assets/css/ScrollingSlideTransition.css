@@ -1,0 +1,76 @@
+#outerSlideSelector{
+    position: absolute;
+    width: 15px;
+    height: 100%;
+    left: 10px;
+    
+    display: flex;
+    align-items: center;
+}
+
+#slideSelector{
+    width: 15px;
+    z-index: 20;
+    
+    
+}
+
+#slideSelector div{
+    border-radius: 10px;
+    width: 10px;
+    height: 10px;
+    
+    margin-bottom: 10px;
+    
+    border: 2px solid #888;
+    background-color: #fff;
+}
+
+#slideSelector div.headerSelector{
+    background-color: #888;
+    margin-top: 5px;
+}
+
+#slideSelector div.currentSelector{
+    background-color: #333;
+    border: 2px solid #333;
+}
+
+
+/*****   TOOL TIP   *****/
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 220px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+ 
+    /* Position the tooltip text LEFT */
+    position: absolute;
+    z-index: 1;
+    top: -100%;
+    left: 150%;
+}
+
+.tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    right: 100%; /* To the left of the tooltip */
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}

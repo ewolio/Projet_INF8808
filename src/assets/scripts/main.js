@@ -6,14 +6,6 @@ var D3=null;
 
   D3 = d3;
   
-  var mainPanel = d3.select('#panel')[0][0];
-  
-  
-  // Main graph
-  var width = mainPanel.offsetWidth - 20, height = mainPanel.offsetHeight - 20;
-  var mainSVG = d3.select('#panel svg');
-  
-  
   d3.queue()
     .defer(d3.csv, "./data/incident.csv")
     .defer(d3.csv, "./data/population.csv")
@@ -32,12 +24,13 @@ var D3=null;
       var countries = preproccessCountries(countryInfos);
       var data = preproccess(roadIncident, population, countries);
       
-    /***** Création du Graphe *****/
-    var graph = new SimpleLineChart(mainSVG, 'main');
-    graph.xCoord = d => d.annee, graph.xTitle = 'Annee';
-    graph.yCoord = d => d['rel all'], graph.yTitle = 'Taux de Mortalité <small>(pour 100 000 habitant)</small>';
-    graph.data = data;
-      
+    /***** Création des Graphes *****/
+    var globalMean = new SimpleLineChart(d3.select('#SVG_globalMean'), 'globalMean');
+    globalMean.dataX = d => d.annee, globalMean.xTitle = 'Annee';
+    globalMean.dataY = d => d!=undefined?d['rel all']:NaN, globalMean.yTitle = 'Taux de Mortalité <small>(pour 100 000 habitant)</small>';
+    globalMean.seriesName = d => d.pays;
+    globalMean.xAxis.tickFormat(d=>d.toString());
+    globalMean.data = data;
     });
 
 })(d3, searchBar);
