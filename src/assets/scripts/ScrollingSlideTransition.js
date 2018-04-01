@@ -2,7 +2,7 @@ jQuery(document).ready(function($){
     
     // INIT SCROLLING
     var sections = $('.slide'),
-        currentSection = -1,
+        currentSection = 0,
         animLock=false;
     
     initSections();
@@ -10,14 +10,21 @@ jQuery(document).ready(function($){
     captureScrolling();
     
     function initSections(){
+        // CHECK ADDRESS FOR CURRENT SECTION
+        var a = window.location.href;
+        if(a.includes('#')){
+            currentSection = parseInt(a.substring(a.indexOf('#')+1));
+            if(currentSection < 0 || currentSection >= sections.length)
+                currentSection = 0;
+        }
+        
         sections.css("top", '100%').hide();
         
-        var firstSection = sections.first();
+        var firstSection = sections.eq(currentSection);
         firstSection.css("top", 0);
         firstSection.show();
         
-        currentSection = 0;
-        
+        // CREATE SELECTOR
         sections.each(function(i, section){
             section = $(section);
             
@@ -32,7 +39,7 @@ jQuery(document).ready(function($){
             }
             $(document.createElement('span')).html(title).addClass('tooltiptext').appendTo(s);
         });
-        $('#slideSelector div').eq(0).addClass('currentSelector');
+        $('#slideSelector div').eq(currentSection).addClass('currentSelector');
     }
     
     function setSection(i){
@@ -40,6 +47,12 @@ jQuery(document).ready(function($){
             return
         $('#slideSelector div').removeClass('currentSelector');
         $('#slideSelector div').eq(i).addClass('currentSelector');
+        
+        var a = window.location.href;
+        if(a.includes('#'))
+            a = a.substring(0, a.indexOf('#'));
+        window.location.href = a+'#'+i;
+        
         animateSection(i);
     }
     
