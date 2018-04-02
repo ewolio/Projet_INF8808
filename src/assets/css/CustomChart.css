@@ -1,17 +1,4 @@
 /***************************************
-*             Chart Area              *
- ***************************************/
-
-.ChartArea2D .areaBackground{
-    opacity: 0;
-}
-
-.ChartArea2D .chartData{
-    pointer-events: bounding-box;
-}
-
-
-/***************************************
 *             AXIS FORMAT              *
  ***************************************/
 
@@ -25,6 +12,17 @@
     stroke: #222;
     stroke-width: 1;
 }
+
+.ChartArea2D .axisTitleText{
+    font-size: 15px;
+    fill: #111;
+}
+
+.ChartArea2D .axisUnitText{
+    font-size: 10px;
+    fill: #333;
+}
+
 
 /***************************************
  *            CHART LINE               *
@@ -41,6 +39,19 @@
 }
 
 /***************************************
+ *           SCATTER PLOT              *
+ ***************************************/
+
+.chartDot{
+    opacity: 0.8;
+}
+
+.chartDot.hovered{
+    opacity: 1;
+}
+
+
+/***************************************
 *             CURSOR FORMAT              *
  ***************************************/
 
@@ -54,4 +65,48 @@
     stroke: #222;
     stroke-width: 2;
     fill: white;
+}
+
+
+/***************************************
+*             BACKGROUND               *
+ ***************************************/
+
+.areaBackground{
+    fill: none;
+}
+
+
+.areaBackground .backgroundLabel{
+    fill: #eee;
+    font-size: 200px;
+    font-weight: bold;
+}
+
+
+.ChartArea2D .chartData{
+    pointer-events: visibleFill;
+}
+
+
+/***************************************
+*          CONTEXT CHART               *
+ ***************************************/
+
+.ContextLineChart .yaxis .tick{
+    visibility: hidden;
+}
+
+.ContextLineChart .xaxis text{
+    font-size: 10px;
+}
+
+.ContextLineChart .chartLine{
+    stroke: #333;
+    stroke-width: 1;
+}
+
+.ContextLineChart .cursor{
+    stroke: #333;
+    stroke-width: 2;
 }

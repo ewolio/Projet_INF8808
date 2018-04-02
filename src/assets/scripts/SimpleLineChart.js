@@ -39,10 +39,12 @@ class SimpleLineChart extends ChartArea2D{
                                                   .attr('r', 2);
                                                        
         this.tipRootElement = this.circleCursorGroup;
+        this.tip.direction('w').offset([-2, -10]);
                                     
     }
     
     drawData(g, data){
+        
         var lines = g.selectAll('path')
                      .data(data);
                      
@@ -51,7 +53,7 @@ class SimpleLineChart extends ChartArea2D{
                                     .attr('fill', 'none');
          
         var self = this;
-        lines.attr('d', d => this.d3Line(this._seriesData(d)))
+        lines.attr('d', d => this.d3Line(this._seriesData(d).filter(d=>notNaN(this._dataX(d)) && notNaN(this._dataY(d)))))
              .attr('stroke', this._lineColor)
              .attr('stroke-width', this._lineWidth);
     }
@@ -99,8 +101,7 @@ class SimpleLineChart extends ChartArea2D{
                 var newPath = paths.filter(d=>self._seriesName(d)==p.serieName);
                 newPath.classed('hovered', true);
                 this.hoveredSerie = p.serieName;
-                
-                this.tip.show(p, this.circleCursor);
+                this.tip.show(p, this.circleCursor.node());
                 return;
             }
         }

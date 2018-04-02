@@ -48,7 +48,7 @@
 /* Westward tooltips */
 .d3-tip.w:after {
   content: "\25B6";
-  margin: -4px 0 0 -1px;
+  margin: -4px -5px 0 -1px;
   top: 50%;
-  left: 100%;
+  right: -50%;
 }

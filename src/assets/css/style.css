@@ -33,6 +33,20 @@ body {
     height: 100%;
 }
 
+/***** Side Style *****/
+.graphSide{
+    float: left;
+    width: 68%;
+    height: 100%;
+}
+.storySide{
+    float: right;
+    width: 30%;
+    height: 100%;
+}
+
+
+
 
 /***** Search bar *****/
 #search-bar {

@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="assets/css/CustomChart.css">
   <link rel="stylesheet" href="assets/css/ScrollingSlideTransition.css">
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/graphics.css">
 </head>
 <body>
     <section class='slide' title='#Accidents routiers mortels'>
@@ -17,16 +18,20 @@
 
         <div class="panel">
             <p> Story telling </p>
-        </div>
+        </div> 
     </section>
-
+    
     <section class='slide' title='Moyenne mondiale'>
         <div class='titleBox'>
             <h1> Accidents mortels de la route</h1>
         </div>
-
-        <div class="panel">
-            <svg id='SVG_globalMean'></svg>
+        <div class='panel'>
+            <div class='graphSide'>
+                <svg id='SVG_globalMean'></svg>
+            </div>
+            <div class='storySide'>
+                <h3>Story telling</h3>
+            </div>
         </div>
     </section>
     
@@ -66,7 +71,13 @@
         </div>
 
         <div class="panel">
-            <svg id='SVG_PIB'></svg>
+            <div class='graphSide'>
+                <svg id='SVG_PIB_Context'></svg>
+                <svg id='SVG_PIB'></svg>
+            </div>
+            <div class='storySide'>
+            <h3>Story telling</h3>
+            </div>
         </div>
     </section>
     
@@ -97,6 +108,8 @@
   <script type="text/javascript" src="assets/scripts/D3CustomChart.js"></script>
   <script type="text/javascript" src="assets/scripts/ChartArea2D.js"></script>
   <script type="text/javascript" src="assets/scripts/SimpleLineChart.js"></script>
+  <script type="text/javascript" src="assets/scripts/ScatterPlot.js"></script>
+  <script type="text/javascript" src="assets/scripts/ContextLineChart.js"></script>
   
   <script type="text/javascript" src="assets/scripts/1-preproc.js"></script>
   <script type="text/javascript" src="assets/scripts/main.js"></script>

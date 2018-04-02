@@ -33,24 +33,25 @@ class D3CustomChart{
         this.chainableProperty('data', null, 'dataChanged');
         
         // Events handler
+        this._events = {};
         this._drawLockCount = 0;
         this._drawRequested = 0;
         
-        this.canva[0][0].ownerDocument.defaultView.onresize = function(){self.checkDataChanged();};
+        $(this.canva.node().ownerDocument.defaultView).resize(function(){self.checkDataChanged();});
     }
     
     draw(){
         if(this._data == null)
             return;
         // Update shape
-        var r = this.canva[0][0].getBoundingClientRect();
+        var r = this.canva.node().getBoundingClientRect();
         this._canvaShape =  [r.right-r.left, r.bottom-r.top];
         
         var margin = this.margins;
         this.gRoot.attr('transform', 'translate('+margin.left+', '+margin.top+')');
         
         // Draw Chart
-        this.drawChart(this.gRoot, this.data);
+        this.drawChart(this.gRoot, this._data);
     }
     
     checkDataChanged(){
@@ -95,8 +96,37 @@ class D3CustomChart{
     get canvaWidth(){ return this._canvaShape[0]; }
     get canvaHeight(){ return this._canvaShape[1]; }
     
+    on(event, task){ return this.addEventListener(event, task); }
+    
+    addEventListener(name, handler){
+        if (this._events.hasOwnProperty(name))
+            this._events[name].push(handler);
+        else
+            this._events[name] = [handler];
+    }
+    
+    removeEventListener(name, handler) {
+        if (!this._events.hasOwnProperty(name))
+            return;
+
+        var index = this.events[name].indexOf(handler);
+        if (index != -1)
+            this.events[name].splice(index, 1);
+    }
+    
+    emit(name, args=[]) {
+        if (!this._events.hasOwnProperty(name))
+            return;
+        var evs = this._events[name], l = evs.length;
+        for (var i = 0; i < l; i++) {
+            evs[i].apply(null, args);
+        }
+    };
+    
+    
     lockDraw(){
         this._drawLockCount += 1;
+        return this;
     }
     requestDraw(){
         if(!this._drawLockCount){
@@ -115,6 +145,7 @@ class D3CustomChart{
                 this.draw();
             this._drawRequested = false;
         }
+        return this;
     }
     
     chainableProperty(name, defaultValue, customSetter=null, castValue=null){

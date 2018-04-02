@@ -1,0 +1,23 @@
+/********************************
+ *      II. GLOBAL MEAN         *
+ ********************************/
+#SVG_globalMean .meanSerie{
+    stroke-width: 2;
+    stroke: black;
+}
+ 
+
+ /********************************
+ *      VI. PIB                  *
+ ********************************/
+/* Context Graph */
+#SVG_PIB_Context{
+    display: block;
+    height: 8%;
+}
+
+/* Main Graph */
+#SVG_PIB{
+    display: block;
+    height: 90%
+}

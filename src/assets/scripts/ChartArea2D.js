@@ -6,6 +6,7 @@ class ChartArea2D extends D3CustomChart{
         super(canva, name, chartType);
         
         // Graph svg components
+        this.background = this.gRoot.append('g').classed('areaBackground', true);
         this.gXAxis = this.gRoot.append('g').attr('id', name+'_XAxis')
                                             .classed('axis', true)
                                             .classed('xaxis', true);
@@ -14,7 +15,6 @@ class ChartArea2D extends D3CustomChart{
                                             .classed('yaxis', true);
         this.gData = this.gRoot.append('g').attr('id', name+'_ChartData')
                                            .classed('chartData', true);
-        
         this.tip = d3.tip().attr('class', 'd3-tip');
         this.tipRootElement = this.gData;
         
@@ -35,27 +35,49 @@ class ChartArea2D extends D3CustomChart{
         this.chainableFunctionProperty('seriesFilter', d=>true, 'draw');
         
         this.chainableProperty('xTitle', '', 'draw');
+        this.chainableProperty('xUnit', '', 'draw');
+        this.chainableProperty('xTitleShort', null);
+        this.chainableFunctionProperty('domainX', d=>d, 'dataChanged');
+        
         this.chainableProperty('yTitle', '', 'draw');
+        this.chainableProperty('yUnit', '', 'draw')
+        this.chainableProperty('yTitleShort', null);
+        this.chainableFunctionProperty('domainY', d=>d, 'dataChanged');
+        
+        this.chainableProperty('backgroundLabel', '', 'draw');
         
         // ChartArea cache
-        this._domainX = [0,0];
-        this._domainY = [0,0];
+        this._dataDomainX = [0,0];
+        this._dataDomainY = [0,0];
+        this._mouseDown = false;
     }
     
     initChart(){
-        this.gXAxis.append('g').classed('axisTitle', true)
-                   .append('text');
-        this.gYAxis.append('g').classed('axisTitle', true)
-                   .append('text');
+        var self = this;
+        this.gXAxis.append('g').classed('axisTitle', true).append('text');
+        this.gYAxis.append('g').classed('axisTitle', true).append('text');
         
         // Background
-        this.gData.append('rect').classed('areaBackground', true);
-                   
+        this.background.append('rect').classed('backgroundSurface', true);
+        this.background.append('text').classed('backgroundLabel', true);
         // Cursors
         this.gData.append('line').classed('vCursor', true).classed('lineCursor', true)
                                  .attr('visibility', 'hidden');
         this.gData.append('line').classed('hCursor', true).classed('lineCursor', true)
                                  .attr('visibility', 'hidden');
+        
+        this.on('mousein', function(e){
+            self.vCursor.attr('visibility', 'visible');
+            self.hCursor.attr('visibility', 'visible');
+        });
+        this.on('mouseout', function(e){
+            self.vCursor.attr('visibility', 'hidden');
+            self.hCursor.attr('visibility', 'hidden');
+        });
+        
+        this.on('mousemove', function(e){self.mousePosChanged(e.pos)});
+                                 
+        this.gData.append('rect').classed('dataHoverArea', true).attr('fill', '#fff').attr('opacity', 0.00001);
     }
     
     drawChart(gRoot, data){
@@ -68,20 +90,34 @@ class ChartArea2D extends D3CustomChart{
         this.y.range([this.height, 0]);
         this.gYAxis.call(this.yAxis);
         
-        this.gXAxis.select('.axisTitle')
-                   .attr('transform', 'translate('+this.width/2+',45)')
-                   .select('text')
-                   .html(this._xTitle);
-        
-        this.gYAxis.select('.axisTitle')
-                   .attr('transform', 'translate(-45, '+(this.height/2)+')rotate(-90)')
-                   .select('text')
-                   .html(this._yTitle);
+        this.gXAxis.select('.axisTitle').attr('transform', 'translate('+this.width/2+',45)');
+                   
+        if(this._xUnit!='')
+            this.gXAxis.select('text').html('<tspan class="axisTitleText">'+this._xTitle+'</tspan> <tspan class="axisUnitText"> ('+this._xUnit+')</tspan>');
+        else
+            this.gXAxis.select('text').html('<tspan class="axisTitleText">'+this._xTitle+'</tspan>');
+            
+        this.gYAxis.select('.axisTitle').attr('transform', 'translate(-45, '+(this.height/2)+')rotate(-90)');
+        if(this._yUnit!='')
+            this.gYAxis.select('text').html('<tspan class="axisTitleText">'+this._yTitle+'</tspan> <tspan class="axisUnitText"> ('+this._yUnit+')</tspan>');
+        else
+            this.gYAxis.select('text').html('<tspan class="axisTitleText">'+this._yTitle+'</tspan>');
         
         // Draw data
-        var areaBackground = this.gData.selectAll('.areaBackground');
-        areaBackground.attr('width', this.width).attr('height', this.height);
+        this.background.select('.backgroundSurface').attr('width', toPx(this.width)).attr('height', toPx(this.height));
+        this.background.select('.backgroundLabel').html(this._backgroundLabel);
+        if(this._backgroundLabel!=''){
+            var bckLabelBBox = this.background.select('.backgroundLabel').node().getBBox();
+            this.background.select('.backgroundLabel').attr('x', toPx(this.width - bckLabelBBox.width - 20))
+                                                    .attr('y', toPx(this.height - 20));
+        }
+        
+                                                  
+        this.gData.select('.dataHoverArea').attr('width', toPx(this.width)).attr('height', toPx(this.height));
+        
+        data = this._data.filter(d => this._seriesFilter(d));
         this.drawData(this.gData, data);
+        this.emit('dataDrawn', [{data:data, gData:this.gData}]);
         
         // Draw cursors
         var vCursor = this.gData.selectAll('.vCursor');
@@ -96,27 +132,41 @@ class ChartArea2D extends D3CustomChart{
         var self = this;
         
         this.gData.on('mouseover', function(){
-            vCursor.attr('visibility', 'visible');
-            hCursor.attr('visibility', 'visible');
-            self.mousePosChanged(D3.mouse(this));
+            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
+            self.emit('mousein', e);
+            self.emit('mousemove', e);
         }).on('mousemove', function(){
-            self.mousePosChanged(D3.mouse(this));
+            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
+            self.emit('mousemove', e);
         }).on('mouseout', function(){
-            vCursor.attr('visibility', 'hidden');
-            hCursor.attr('visibility', 'hidden');
-            self.hoverNearestData(null);
+            self._mouseDown = false;
+            var e = [{pos:null, mouseDown:self._mouseDown}];
+            self.emit('mouseout', e);
+            self.emit('mousemove', e);
+        }).on('click', function(){
+            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
+            self.emit('click', e);
+        }).on('mousedown', function(){
+            self._mouseDown = true;
+            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
+            self.emit('mousedown', e);
+        }).on('mouseup', function(){
+            self._mouseDown = false;
+            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
+            self.emit('mouseup', e);
         });
         
         this.tipRootElement.call(this.tip);
     }
     
     mousePosChanged(mousePos){
-        var vCursor = this.gData.selectAll('.vCursor');
-        var hCursor = this.gData.selectAll('.hCursor');
-        
-        vCursor.attr('x1', mousePos[0]).attr('x2', mousePos[0]);
-        hCursor.attr('y1', mousePos[1]).attr('y2', mousePos[1]);
-        
+        if(mousePos != null){
+            var vCursor = this.gData.selectAll('.vCursor');
+            var hCursor = this.gData.selectAll('.hCursor');
+            
+            vCursor.attr('x1', mousePos[0]).attr('x2', mousePos[0]);
+            hCursor.attr('y1', mousePos[1]).attr('y2', mousePos[1]);
+        }
         this.hoverNearestData(mousePos);
     }
     
@@ -127,13 +177,13 @@ class ChartArea2D extends D3CustomChart{
         
         var data = this._data.filter(d => this._seriesFilter(d));
         
-        this.domainX = [D3.min(data, serie => D3.min(this._seriesData(serie), d => this._dataX(d))),
-                        D3.max(data, serie => D3.max(this._seriesData(serie), d => this._dataX(d)))];
+        this._dataDomainX = [D3.min(data, serie => D3.min(this._seriesData(serie), d => this._dataX(d))),
+                             D3.max(data, serie => D3.max(this._seriesData(serie), d => this._dataX(d)))];
                         
-        this.domainY = [D3.min(data, serie => D3.min(this._seriesData(serie), d => this._dataY(d))),
+        this._dataDomainY  = [D3.min(data, serie => D3.min(this._seriesData(serie), d => this._dataY(d))),
                         D3.max(data, serie => D3.max(this._seriesData(serie), d => this._dataY(d)))];
-        this.x.domain(this.domainX);
-        this.y.domain(this.domainY);
+        this.x.domain(this._domainX(this._dataDomainX));
+        this.y.domain(this._domainY(this._dataDomainY));
         
         this.unlockDraw(true);
     }
@@ -141,4 +191,3 @@ class ChartArea2D extends D3CustomChart{
     get vCursor(){return this.gData.selectAll('.vCursor');}
     get hCursor(){return this.gData.selectAll('.hCursor');}
 }
- 

@@ -15,3 +15,7 @@ function argmin( a ) {
 	}
 	return id;
 }
+
+function notNaN(a){
+    return a!=undefined && !isNaN(a);
+}
