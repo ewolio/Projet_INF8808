@@ -19,17 +19,50 @@ class ContextLineChart extends SimpleLineChart{
         }
         
         this.on('click', function(e){
-            var x = self.vCursor.attr('x1');
-            self.cursor.attr('x1', x).attr('x2', x);
-            self.emit('cursorMoved', [{x: self.cursorX}]);
+            self.moveTo(self.vCursor.attr('x1'), false);
         });
         
         this.on('dataDrawn', function(){ self.cursor.attr('y2', self.height+5); });
+        
+        this.chainableProperty('speed', 1);
+        this._playing = false;
+        setInterval(function(){self.tick()}, 50);
     }
     
     get cursorX(){
-        return this.x.invert(this.vCursor.attr('x1'));
+        return this.x.invert(this.cursor.attr('x1'));
     }
     
+    play(speed=null){
+        if(speed != null)
+            this.speed = speed;
+        if(!this._playing && this.cursorX == this._dataDomainX[1])
+            this.moveTo(this._dataDomainX[0]);
+        
+        this._playing = true;
+    }
+    
+    pause(){
+        this._playing = false;
+    }
+    
+    tick(){
+        if(!this._playing)
+            return;
+        var nextX = this.cursorX + this._speed/20;
+        if(nextX > this._dataDomainX[1]){
+            nextX = this._dataDomainX[1];
+            this.pause();
+            this.emit('reachEnd');
+        }
+        this.moveTo(nextX);
+    }
+    
+    moveTo(x, cast=true){
+        if(cast)
+            x = this.x(x);
+        this.cursor.attr('x1', x).attr('x2', x);
+        this.emit('cursorMoved', [{x: this.cursorX}]);
+    }
 }
 

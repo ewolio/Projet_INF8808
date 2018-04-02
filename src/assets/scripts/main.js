@@ -64,15 +64,35 @@ var D3=null;
         };
         
         var year = pibContextPlot.cursorX;
-        console.log(year);
         pibPlot.backgroundLabel(year).data(selectYear(year, data));
         
         pibContextPlot.on('cursorMoved', function(e){
             var x = Math.round(e.x);
-            pibPlot.lockDraw()
-                   .backgroundLabel(x)
-                   .data(selectYear(x, data))
-                   .unlockDraw();
+            if(x!=year){
+                pibPlot.lockDraw()
+                    .backgroundLabel(x)
+                    .data(selectYear(x, data))
+                    .unlockDraw();
+                year = x;
+            }
+        });
+        pibContextPlot.on('reachEnd', function(){
+            var b = D3.select('#PIB_play i');
+            b.classed('fa-pause', false);
+            b.classed('fa-play', true);
+        });
+        
+        D3.select('#PIB_play').on('click', function(){
+            var b = D3.select('#PIB_play i');
+            if(b.classed('fa-play')){
+                b.classed('fa-play', false);
+                b.classed('fa-pause', true);
+                pibContextPlot.play();
+            }else{
+                b.classed('fa-pause', false);
+                b.classed('fa-play', true);
+                pibContextPlot.pause();
+            }
         });
     });
 

@@ -21,3 +21,14 @@
     display: block;
     height: 90%
 }
+
+/* Play Button */
+#PIB_play{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    padding: 5px;
+    float: left;
+    left: 5px;
+    top: 5px;
+}
