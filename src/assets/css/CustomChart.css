@@ -28,14 +28,21 @@
  *            CHART LINE               *
  ***************************************/
 
-.chartLine{
+.serieLine{
     stroke: #777;
     stroke-width: 0.5;
 }
 
-.chartLine.hovered{
+.serieLine.hovered{
     stroke: #111;
     stroke-width: 0.5; 
+}
+
+.serieArea{
+    opacity: 0.4;
+}
+.serieArea.hovered{
+    opacity: 0.8;
 }
 
 /***************************************

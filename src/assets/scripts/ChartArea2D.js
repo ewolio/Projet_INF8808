@@ -106,11 +106,11 @@ class ChartArea2D extends D3CustomChart{
         // Draw data
         this.background.select('.backgroundSurface').attr('width', toPx(this.width)).attr('height', toPx(this.height));
         this.background.select('.backgroundLabel').html(this._backgroundLabel);
-        if(this._backgroundLabel!=''){
+        try{
             var bckLabelBBox = this.background.select('.backgroundLabel').node().getBBox();
             this.background.select('.backgroundLabel').attr('x', toPx(this.width - bckLabelBBox.width - 20))
                                                     .attr('y', toPx(this.height - 20));
-        }
+        }catch(error){}
         
                                                   
         this.gData.select('.dataHoverArea').attr('width', toPx(this.width)).attr('height', toPx(this.height));

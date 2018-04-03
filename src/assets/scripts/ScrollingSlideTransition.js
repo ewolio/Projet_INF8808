@@ -85,14 +85,14 @@ jQuery(document).ready(function($){
         if(fade){
             nextS.css('top', '0');
             nextS.css('opacity', '0');
-            nextS.css('z-index', 10);
+            nextS.css('z-index', 1);
             nextS.show();
             
             nextS.animate({opacity: 1}, DURATION, EASING);
             
             await sleep(2*DURATION);
             prevS.hide();
-            nextS.css('z-index', 1);
+            nextS.css('z-index', 0);
         }else{
         nextS.css('top', prevI<nextI?'100%':'-100%');
         nextS.show();

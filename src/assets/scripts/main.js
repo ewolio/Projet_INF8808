@@ -94,6 +94,44 @@ var D3=null;
                 pibContextPlot.pause();
             }
         });
+        
+        /* Focus France Mean */
+        
+        var selectCountryData = function(country, prefix, cumul=true){
+            var items = ['00-14', '15-29', '30-44', '45-59', '60+'];
+            var dataOut = [];
+            var cData = data.filter(d=>d.pays==country)[0].data;
+            for(var i=0; i<items.length; i++){
+                var item = items[i];
+                var itemR = [];
+                cData.forEach(function(d, anneeIt){
+                    if(d.annee>2007)
+                        return;
+                    var r = {annee: d.annee};
+                    r['y'] = notNaN(d[prefix+item])?d[prefix+item]:0;
+                    if(cumul && i>0)
+                        r['y'] += dataOut[i-1].data[anneeIt].y;
+                    itemR.push(r);
+                });
+                dataOut.push({name: item, data: itemR});
+            }
+            return dataOut;
+        }
+        
+        var frData = selectCountryData('France', 'abs ', true);
+        console.log(frData);
+        
+        var setupFr = function(svg, name){
+            var frBack = new AreaLineChart(d3.select(svg), name);
+            frBack.dataX(d => d.annee).xTitle('Annee').domainX([1970, 2007])
+                        .yTitle('Nombre de morts');
+            frBack.xAxis.tickFormat(d=>d.toString());
+            frBack.data(frData);
+        }
+        
+        setupFr('#SVG_france', 'france');
+        setupFr('#SVG_legislation', 'legislation');
+        setupFr('#SVG_techniques', 'techniques');
     });
 
 })(d3, searchBar);

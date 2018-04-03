@@ -45,11 +45,11 @@ class SimpleLineChart extends ChartArea2D{
     
     drawData(g, data){
         
-        var lines = g.selectAll('path')
+        var lines = g.selectAll('path.serieLine')
                      .data(data);
                      
         lines.exit().remove(); // Remove old lines
-        var newLines = lines.enter().append('path').classed('chartLine', true)
+        var newLines = lines.enter().append('path').classed('serieLine', true)
                                     .attr('fill', 'none');
          
         var self = this;
