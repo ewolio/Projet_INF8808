@@ -34,7 +34,7 @@ var D3=null;
                     .yTitle('Taux de Mortalité').yUnit('per 100 000 hab.');
         globalMean.seriesName(d => d.pays);
         globalMean.xAxis.tickFormat(d=>d.toString());
-        globalMean.on('dataDrawn', function(e){e.gData.select('.chartLine').classed('meanSerie', d=>d.pays=='MEAN');})
+        globalMean.on('dataDrawn', function(e){e.gData.select('.serieLine').classed('meanSerie', d=>d.pays=='MEAN');})
         globalMean.data(data);
         
         /* PIB */
@@ -95,8 +95,7 @@ var D3=null;
             }
         });
         
-        /* Focus France Mean */
-        
+        /* Focus France Mean */        
         var selectCountryData = function(country, prefix, cumul=true){
             var items = ['00-14', '15-29', '30-44', '45-59', '60+'];
             var dataOut = [];
@@ -132,6 +131,10 @@ var D3=null;
         setupFr('#SVG_france', 'france');
         setupFr('#SVG_legislation', 'legislation');
         setupFr('#SVG_techniques', 'techniques');
+        
+        
+        /* Global graph */
+        
     });
 
 })(d3, searchBar);
