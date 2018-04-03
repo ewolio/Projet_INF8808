@@ -28,6 +28,7 @@ class SimpleLineChart extends ChartArea2D{
                         
         this.chainableFunctionProperty('lineColor', d => d.color!==undefined ? d.color : '#444', 'draw'); 
         this.chainableFunctionProperty('lineWidth', d => d.width!==undefined ? d.width : 0.5, 'draw'); 
+        this.chainableFunctionProperty('enable', d=>true, 'draw');
         this.chainableFunctionProperty('htmlTip', d => this.defaultHtmlTip(d), 
                                        function(){self.tip.html(self._htmlTip);});
         this.tip.html(this._htmlTip);
@@ -55,7 +56,8 @@ class SimpleLineChart extends ChartArea2D{
         var self = this;
         lines.attr('d', d => this.d3Line(this._seriesData(d).filter(d=>notNaN(this._dataX(d)) && notNaN(this._dataY(d)))))
              .attr('stroke', this._lineColor)
-             .attr('stroke-width', this._lineWidth);
+             .attr('stroke-width', this._lineWidth)
+             .classed('disabled', d=>!this._enable(d));
     }
     
     hoverNearestData(mousePos){
@@ -66,7 +68,7 @@ class SimpleLineChart extends ChartArea2D{
             
             
             var self = this;
-            var closestPoints = paths.data().map(function(d){
+            var closestPoints = paths.data().filter(this._enable).map(function(d){
                 var serieData = self._seriesData(d);
                 var dataX = serieData.map(self._dataX);
                 var nextXi = D3.bisectLeft(dataX.map(self.x), mouseX);

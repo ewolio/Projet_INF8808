@@ -38,6 +38,11 @@
     stroke-width: 0.5; 
 }
 
+.serieLine.disabled{
+    stroke: #ddd;
+    stroke-width: 0.5; 
+}
+
 .serieArea{
     opacity: 0.4;
 }

@@ -134,7 +134,82 @@ var D3=null;
         
         
         /* Global graph */
+        var global = new SimpleLineChart(d3.select('#SVG_global'), 'global');
+        global.dataX(d => d.annee).xTitle('Annee')
+                    .dataY(d => d!=undefined?d['rel all']:NaN)
+                    .yTitle('Taux de Mortalité').yUnit('per 100 000 hab.');
+        global.seriesName(d => d.pays);
+        global.xAxis.tickFormat(d=>d.toString());
+        global.data(data.filter(d=>d.pays!='MEAN'));
         
+        var selectGlobalSerie = function(s){
+            global.enable = d=>d.pays==s;
+        }
+        var resetSelection = function(){
+            global.enable = d=>true;
+        }
+        
+        
+        // AUTO COMPLETION -> A DEPLACER!!!!!
+         new autoComplete({
+        selector: "#SEARCHBAR_global input",
+        minChars: 1,
+        source: function(term, suggest) {
+          term = term.toLowerCase();
+          var matches = [];
+          data.forEach(function(d) {
+            if (~d.pays.toLowerCase().indexOf(term)) {
+              matches.push(d);
+            }
+          });
+          suggest(matches);
+        },
+        renderItem: function(item, search) {
+          search = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+          var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
+          return "<div class='autocomplete-suggestion' data-val='"
+            + item.pays + "'>" + item.pays.replace(re, "<b>$1</b>") + "</div>";
+        },
+        onSelect: function(e, term, item) {
+          selectGlobalSerie(item.getAttribute("data-val"));
+        }
+      });
+
+      // Ajout d'évènements sur la barre de recherche et le bouton.
+      var searchBarInput = d3.select("#SEARCHBAR_global input");
+      searchBarInput.on("keydown", function () {
+        if (d3.event.key === "Enter") {
+          validateInput();
+        } else {
+          resetSelection();
+          searchBarInput.classed("error", false);
+        }
+      });
+      d3.select("#SEARCHBAR_global button")
+        .on("click", validateInput);
+
+      /**
+       * Valide la valeur entrée dans la barre et réalise une recherche.
+       */
+      function validateInput() {
+        function normalize(str) {
+          return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+        var value = searchBarInput.node().value.toLowerCase();
+        if (!value) {
+          return;
+        }
+        var currentValue = normalize(value);
+        const countryFound = data.find(function(zone) {
+          return normalize(zone.pays.toLowerCase()) === currentValue;
+        });
+        if (countryFound) {
+          selectGlobalSerie(countryFound.pays);
+        } else {
+          resetSelection();
+          searchBarInput.classed("error", true);
+        }
+      }
     });
 
 })(d3, searchBar);

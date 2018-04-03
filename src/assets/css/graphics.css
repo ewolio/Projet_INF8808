@@ -32,3 +32,13 @@
     left: 5px;
     top: 5px;
 }
+
+
+/********************************
+ *      VII. GLOBAL             *
+ ********************************/
+#SEARCHBAR_global{
+    position: absolute;
+    right: 50px;
+    top: 10px;
+}
