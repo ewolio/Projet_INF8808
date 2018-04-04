@@ -42,16 +42,21 @@ class ScatterPlot extends ChartArea2D{
                                    .attr('serie', d=>this._seriesName(d));
          
         var self = this;
-        dots.attr('visibility', d=>(notNaN(this._dataR(this._seriesData(d)[0]))&&
-                                 notNaN(this._dataX(this._seriesData(d)[0]))&&
-                                 notNaN(this._dataY(this._seriesData(d)[0])) )?'visible':'hidden')
-            .transition()
+        dots.transition()
             .ease('easeLinear')
-            .duration(1000)
-            .attr('r', function(d){ var r = self._dataR(self._seriesData(d)[0]); return notNaN(r)? self.r(r) : 0; })
-            .attr('cx', function(d){ var x = self._dataX(self._seriesData(d)[0]); return notNaN(x)? self.x(x) : 0; })
-            .attr('cy', function(d){ var y = self._dataY(self._seriesData(d)[0]); return notNaN(y)? self.y(y) : 0; })
+            .duration(this._animDuration)
+            .attr('r', function(d){ var r = self._dataR(self._seriesData(d)[0]); return notNaN(r)? self.r(r) : undefined; })
+            .attr('cx', function(d){ var x = self._dataX(self._seriesData(d)[0]); return notNaN(x)? self.x(x) : undefined; })
+            .attr('cy', function(d){ var y = self._dataY(self._seriesData(d)[0]); return notNaN(y)? self.y(y) : undefined; })
             .attr('fill', this._dotColor)
+            .each('end', function(){dots.attr('visibility', d=>(notNaN(self._dataR(self._seriesData(d)[0]))&&
+                                                    notNaN(self._dataX(self._seriesData(d)[0]))&&
+                                                    notNaN(self._dataY(self._seriesData(d)[0])) )?'visible':'hidden')})
+        
+        for(var c in this._classed){
+            var f = this._classed[c];
+            dots.classed(c, f);
+        };
     }
     
     hoverNearestData(mousePos){

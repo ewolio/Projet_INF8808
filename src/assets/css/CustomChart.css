@@ -29,7 +29,7 @@
  ***************************************/
 
 .serieLine{
-    stroke: #777;
+    stroke: #999;
     stroke-width: 0.5;
 }
 
@@ -41,6 +41,50 @@
 .serieLine.disabled{
     stroke: #ddd;
     stroke-width: 0.5; 
+}
+
+.serieLine.selected{
+    stroke: #111;
+    stroke-width: 1;
+    z-index: 2;
+}
+
+.serieArea{
+    opacity: 0.2;
+}
+.serieArea.hovered{
+    opacity: 0.6;
+}
+
+.AreaLineChart .serieLine{
+    stroke-width: 1;
+    stroke: #222;
+}
+
+
+/***************************************
+ *            OVERLAY                  *
+ ***************************************/
+
+.ChronologicalOverlay .vLine{
+    stroke: #111;
+    stroke-width: 1;
+}
+
+.serieLine.hovered{
+    stroke: #111;
+    stroke-width: 0.5; 
+}
+
+.serieLine.disabled{
+    stroke: #ddd;
+    stroke-width: 0.5; 
+}
+
+.serieLine.selected{
+    stroke: #111;
+    stroke-width: 1;
+    z-index: 2;
 }
 
 .serieArea{

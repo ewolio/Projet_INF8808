@@ -5,14 +5,14 @@
   <title>Accidents mortels de la route</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="assets/css/d3-tip.css">
-  <link rel="stylesheet" href="assets/css/auto-complete.css">
+  <link rel="stylesheet" href="assets/css/widgets.css">
   <link rel="stylesheet" href="assets/css/CustomChart.css">
   <link rel="stylesheet" href="assets/css/ScrollingSlideTransition.css">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/graphics.css">
 </head>
 <body>
-    <section class='slide' title='#Accidents routiers mortels'>
+    <section class='slide' slideTitle='#Accidents routiers mortels'>
         <div class='titleBox'>
             <h1> Accidents mortels de la route</h1>
         </div>
@@ -22,7 +22,7 @@
         </div> 
     </section>
     
-    <section class='slide' title='Moyenne mondiale'>
+    <section class='slide' slideTitle='Moyenne mondiale'>
         <div class='titleBox'>
             <h1> Accidents mortels de la route</h1>
         </div>
@@ -36,7 +36,7 @@
         </div>
     </section>
     
-    <section class='slide' title='#Focus sur la France'>
+    <section class='slide' slideTitle='#Focus sur la France'>
         <div class='titleBox'>
             <h1> En France</h1>
         </div>
@@ -44,6 +44,7 @@
         <div class="panel">
             <div class='graphSide'>
                 <svg id='SVG_france'></svg>
+                <div class='legend'><label id='stackToggle_france' class='ToggleSwitch'></label></div>
             </div>
             <div class='storySide'>
                 <h3>Story telling</h3>
@@ -51,7 +52,7 @@
         </div>
     </section>
     
-    <section class='slide' title='Évolution législatives' transition='fade'>
+    <section class='slide' slideTitle='Évolution législatives' transition='fade'>
         <div class='titleBox'>
             <h1> En France </h1>
         </div>
@@ -59,6 +60,7 @@
         <div class="panel">
             <div class='graphSide'>
                 <svg id='SVG_legislation'></svg>
+                <div class='legend'><label id='stackToggle_legislation' class='ToggleSwitch'></label></div>
             </div>
             <div class='storySide'>
                 <h3>Story telling</h3>
@@ -66,7 +68,7 @@
         </div>
     </section>
 
-    <section class='slide' title='Évolution techniques' transition='fade'>
+    <section class='slide' slideTitle='Évolution techniques' transition='fade'>
         <div class='titleBox'>
             <h1> En France </h1>
         </div>
@@ -74,6 +76,7 @@
         <div class="panel">
             <div class='graphSide'>
                 <svg id='SVG_techniques'></svg>
+                <div class='legend'><label id='stackToggle_techniques' class='ToggleSwitch'></label></div>
             </div>
             <div class='storySide'>
                 <h3>Story telling</h3>
@@ -81,7 +84,7 @@
         </div>
     </section>
     
-    <section class='slide' title='#Mortalité routière et PIB'>
+    <section class='slide' slideTitle='#Mortalité routière et PIB'>
         <div class='titleBox'>
             <h1> Mortalité routière et PIB </h1>
         </div>
@@ -98,19 +101,14 @@
         </div>
     </section>
     
-    <section class='slide' title='Mortalité routière mondiale'>
+    <section class='slide' slideTitle='Mortalité routière mondiale'>
         <div class='titleBox'>
             <h1> Mortalité routière dans le monde </h1>
         </div>
 
         <div class="panel">
             <svg id='SVG_global'></svg>
-            <div id="SEARCHBAR_global" class='search-bar'>
-                <input title="search-input" type="text" placeholder="Rechercher un pays...">
-                <button title="Rechercher">
-                <img alt="Rechercher" src="./assets/img/search.svg">
-                </button>
-            </div>
+            <div id="SEARCHBAR_global" class='search-bar'></div>
         </div>
     </section>
     
@@ -134,6 +132,8 @@
   <script type="text/javascript" src="assets/scripts/AreaLineChart.js"></script>
   <script type="text/javascript" src="assets/scripts/ScatterPlot.js"></script>
   <script type="text/javascript" src="assets/scripts/ContextLineChart.js"></script>
+  <script type="text/javascript" src="assets/scripts/ChronologicalOverlay.js"></script>
+  <script type="text/javascript" src="assets/scripts/Widgets.js"></script>
   
   <script type="text/javascript" src="assets/scripts/1-preproc.js"></script>
   <script type="text/javascript" src="assets/scripts/main.js"></script>

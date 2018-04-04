@@ -5,29 +5,32 @@ var D3=null;
   "use strict";
 
   D3 = d3;
-  //D3._onload = [];
-  //D3.onload = function(callback){D3._onload.push(callback);};
+  setupWidgets();
   
   d3.queue()
     .defer(d3.csv, "./data/incident.csv")
     .defer(d3.csv, "./data/population.csv")
     .defer(d3.csv, "./data/countryInfos.csv")
     .defer(d3.csv, "./data/pib.csv")
+    .defer(d3.csv, "./data/leg.csv")
     .awaitAll(function (error, results) {
         /***** Chargement des données *****/
-        if (error || results.length !== 4) {
+        if (error || results.length !== 5) {
             throw error;
         }
         var roadIncident = results[0], population = results[1], 
-            countryInfos = results[2], pib = results[3];
+            countryInfos = results[2], pib = results[3],
+            leg = results[4];
 
         /***** Prétraitement des données *****/
         var countries = preproccessCountries(countryInfos);
         var data = preproccess(roadIncident, population, pib, countries);
         
+        
         /***** Création des Graphes *****/
     
-        /* Global Mean */
+        /****************************************************************************************************/
+        /* GLOBAL MEAN */
         var globalMean = new SimpleLineChart(d3.select('#SVG_globalMean'), 'globalMean');
         globalMean.dataX(d => d.annee).xTitle('Annee')
                     .dataY(d => d!=undefined?d['rel all']:NaN)
@@ -37,6 +40,73 @@ var D3=null;
         globalMean.on('dataDrawn', function(e){e.gData.select('.serieLine').classed('meanSerie', d=>d.pays=='MEAN');})
         globalMean.data(data);
         
+        
+        /****************************************************************************************************/
+        /* FRANCE */        
+        var selectCountryData = function(country, prefix, cumul=true){
+            var items = ['00-14', '15-29', '30-44', '45-59', '60+'];
+            var dataOut = [];
+            var cData = data.filter(d=>d.pays==country)[0].data;
+            for(var i=0; i<items.length; i++){
+                var item = items[i];
+                var itemR = [];
+                cData.forEach(function(d, anneeIt){
+                    if(d.annee>2007)
+                        return;
+                    var r = {annee: d.annee};
+                    r['y'] = notNaN(d[prefix+item])?d[prefix+item]:0;
+                    if(cumul && i>0)
+                        r['y'] += dataOut[i-1].data[anneeIt].y;
+                    itemR.push(r);
+                });
+                dataOut.push({name: item, data: itemR});
+            }
+            dataOut.country = country;
+            dataOut.prefix = prefix;
+            dataOut.cumul = cumul;
+            return dataOut;
+        }
+        
+        var frData = selectCountryData('France', 'abs ', false);
+        
+        var setupFr = function(svg, name){
+            var frBack = new AreaLineChart(d3.select('#SVG_'+svg), name);
+            frBack.dataX(d => d.annee).xTitle('Annee').domainX([1970, 2007])
+                        .yTitle('Nombre de morts');
+            frBack.xAxis.tickFormat(d=>d.toString());
+            frBack.data(frData);
+            
+            D3.select('#stackToggle_'+name).classed('stackToggleFr', true)
+            .on('change', function(){
+                var checked = this.checked;
+                if(frBack.data().cumul != checked){
+                    frData = selectCountryData('France', 'abs ', checked);
+                    frBack.data(frData);
+                    frBack.classed('noArea', !checked)
+                    D3.selectAll('.stackToggleFr input').each(function(){
+                        this.checked = checked; 
+                        this.dispatchEvent(new Event('change'));
+                    });
+                }
+            });
+            
+            return frBack;
+        }
+        
+        var fr = setupFr('france', 'france');
+        var frLeg = setupFr('legislation', 'legislation');
+        var frTech = setupFr('techniques', 'techniques');
+        
+        /*** AVANCÉES LEGISLATION ***/
+        var overlayLegislation = new ChronologicalOverlay(frLeg, 'legOverlay');
+        overlayLegislation.dataX(d=>d['Année']).dataTitle(d=>d['Titre']).dataInfo(d=>d['Text']).data(leg);
+        
+        /*** AVANCÉES TECHNIQUES ***/
+        var overlayTechnique = new ChronologicalOverlay(frTech, 'legTechnique');
+        overlayTechnique.data([{x:1982, title:'Test', info:'info'}]);
+        
+        
+        /****************************************************************************************************/
         /* PIB */
         var pibContextPlot = new ContextLineChart(d3.select('#SVG_PIB_Context'), 'PIB');
         pibContextPlot.dataX(d=>d.annee).xTitle('Annee').xAxis.tickFormat(d=>d.toString());
@@ -67,7 +137,7 @@ var D3=null;
         pibPlot.backgroundLabel(year).data(selectYear(year, data));
         
         pibContextPlot.on('cursorMoved', function(e){
-            var x = Math.round(e.x);
+            var x = Math.ceil(e.x-0.1);
             if(x!=year){
                 pibPlot.lockDraw()
                     .backgroundLabel(x)
@@ -95,44 +165,6 @@ var D3=null;
             }
         });
         
-        /* Focus France Mean */        
-        var selectCountryData = function(country, prefix, cumul=true){
-            var items = ['00-14', '15-29', '30-44', '45-59', '60+'];
-            var dataOut = [];
-            var cData = data.filter(d=>d.pays==country)[0].data;
-            for(var i=0; i<items.length; i++){
-                var item = items[i];
-                var itemR = [];
-                cData.forEach(function(d, anneeIt){
-                    if(d.annee>2007)
-                        return;
-                    var r = {annee: d.annee};
-                    r['y'] = notNaN(d[prefix+item])?d[prefix+item]:0;
-                    if(cumul && i>0)
-                        r['y'] += dataOut[i-1].data[anneeIt].y;
-                    itemR.push(r);
-                });
-                dataOut.push({name: item, data: itemR});
-            }
-            return dataOut;
-        }
-        
-        var frData = selectCountryData('France', 'abs ', true);
-        console.log(frData);
-        
-        var setupFr = function(svg, name){
-            var frBack = new AreaLineChart(d3.select(svg), name);
-            frBack.dataX(d => d.annee).xTitle('Annee').domainX([1970, 2007])
-                        .yTitle('Nombre de morts');
-            frBack.xAxis.tickFormat(d=>d.toString());
-            frBack.data(frData);
-        }
-        
-        setupFr('#SVG_france', 'france');
-        setupFr('#SVG_legislation', 'legislation');
-        setupFr('#SVG_techniques', 'techniques');
-        
-        
         /* Global graph */
         var global = new SimpleLineChart(d3.select('#SVG_global'), 'global');
         global.dataX(d => d.annee).xTitle('Annee')
@@ -144,72 +176,14 @@ var D3=null;
         
         var selectGlobalSerie = function(s){
             global.enable = d=>d.pays==s;
+            global.classed('selected', d=>d.pays==s)
         }
-        var resetSelection = function(){
+        var resetGlobalSerie = function(){
             global.enable = d=>true;
+            global.classed('selected', false);
         }
         
-        
-        // AUTO COMPLETION -> A DEPLACER!!!!!
-         new autoComplete({
-        selector: "#SEARCHBAR_global input",
-        minChars: 1,
-        source: function(term, suggest) {
-          term = term.toLowerCase();
-          var matches = [];
-          data.forEach(function(d) {
-            if (~d.pays.toLowerCase().indexOf(term)) {
-              matches.push(d);
-            }
-          });
-          suggest(matches);
-        },
-        renderItem: function(item, search) {
-          search = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-          var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
-          return "<div class='autocomplete-suggestion' data-val='"
-            + item.pays + "'>" + item.pays.replace(re, "<b>$1</b>") + "</div>";
-        },
-        onSelect: function(e, term, item) {
-          selectGlobalSerie(item.getAttribute("data-val"));
-        }
-      });
-
-      // Ajout d'évènements sur la barre de recherche et le bouton.
-      var searchBarInput = d3.select("#SEARCHBAR_global input");
-      searchBarInput.on("keydown", function () {
-        if (d3.event.key === "Enter") {
-          validateInput();
-        } else {
-          resetSelection();
-          searchBarInput.classed("error", false);
-        }
-      });
-      d3.select("#SEARCHBAR_global button")
-        .on("click", validateInput);
-
-      /**
-       * Valide la valeur entrée dans la barre et réalise une recherche.
-       */
-      function validateInput() {
-        function normalize(str) {
-          return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        }
-        var value = searchBarInput.node().value.toLowerCase();
-        if (!value) {
-          return;
-        }
-        var currentValue = normalize(value);
-        const countryFound = data.find(function(zone) {
-          return normalize(zone.pays.toLowerCase()) === currentValue;
-        });
-        if (countryFound) {
-          selectGlobalSerie(countryFound.pays);
-        } else {
-          resetSelection();
-          searchBarInput.classed("error", true);
-        }
-      }
+        new SearchBar('SEARCHBAR_global', selectGlobalSerie, resetGlobalSerie, data.map(d=>d.pays), 'Rechercher un pays');
     });
 
 })(d3, searchBar);

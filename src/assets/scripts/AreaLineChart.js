@@ -9,7 +9,7 @@ class AreaLineChart extends SimpleLineChart{
         this.d3Area = D3.svg.area()
                         .x(d => this.x(this._dataX(d)))
                         .y1(d => this.y(this._dataY(d)))
-                        .y0(d => this.y(0))
+                        .y0(d => this.height)
                         .interpolate("cardinal");
                         
         this.chainableFunctionProperty('areaColor', d => d.color!==undefined ? d.color : '#444', 'draw');
@@ -26,9 +26,14 @@ class AreaLineChart extends SimpleLineChart{
                                     .attr('fill', 'none');
          
         var self = this;
-        areas.transition().duration(500)
+        areas.transition().duration(this._animDuration)
              .attr('d', d => this.d3Area(this._seriesData(d).filter(d=>notNaN(this._dataX(d)) && notNaN(this._dataY(d)))))
              .attr('fill', this._areaColor);
+             
+        for(var c in this._classed){
+            var f = this._classed[c];
+            areas.classed(c, f);
+        };
     }
     
     

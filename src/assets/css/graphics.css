@@ -1,4 +1,16 @@
 /********************************
+ *          ALL GRAPHS          *
+ ********************************/
+
+.legend{
+    position: absolute;
+    right: 20px;
+    top: 0px;
+    z-index: 2;
+}
+
+
+/********************************
  *      II. GLOBAL MEAN         *
  ********************************/
 #SVG_globalMean .meanSerie{

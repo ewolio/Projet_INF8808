@@ -54,10 +54,16 @@ class SimpleLineChart extends ChartArea2D{
                                     .attr('fill', 'none');
          
         var self = this;
-        lines.attr('d', d => this.d3Line(this._seriesData(d).filter(d=>notNaN(this._dataX(d)) && notNaN(this._dataY(d)))))
+        lines.transition().duration(this._animDuration)
+             .attr('d', d => this.d3Line(this._seriesData(d).filter(d=>notNaN(this._dataX(d)) && notNaN(this._dataY(d)))))
              .attr('stroke', this._lineColor)
-             .attr('stroke-width', this._lineWidth)
-             .classed('disabled', d=>!this._enable(d));
+             .attr('stroke-width', this._lineWidth);
+        lines.classed('disabled', d=>!this._enable(d));
+        
+        for(var c in this._classed){
+            var f = this._classed[c];
+            lines.classed(c, f);
+        };
     }
     
     hoverNearestData(mousePos){
@@ -88,7 +94,7 @@ class SimpleLineChart extends ChartArea2D{
             
             var p = closestPoints[argmin(closestPoints.map(distance))];
             
-            if(distance(p) < 50**2){
+            if(distance(p) < 75**2){
                 this.circleCursorGroup.attr('transform', 'translate('+p.screenX+', '+p.screenY+')');
                 this.vCursor.attr('x1', p.screenX).attr('x2', p.screenX);
                 

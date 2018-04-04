@@ -50,6 +50,7 @@ class ChartArea2D extends D3CustomChart{
         this._dataDomainX = [0,0];
         this._dataDomainY = [0,0];
         this._mouseDown = false;
+        this._classed = {};
     }
     
     initChart(){
@@ -85,10 +86,10 @@ class ChartArea2D extends D3CustomChart{
         // Draw 2DChartArea
         this.x.range([0, this.width]);
         this.gXAxis.attr('transform', 'translate(0, '+this.height+')');
-        this.gXAxis.call(this.xAxis);
+        this.gXAxis.transition().duration(this._animDuration).call(this.xAxis);
         
         this.y.range([this.height, 0]);
-        this.gYAxis.call(this.yAxis);
+        this.gYAxis.transition().duration(this._animDuration).call(this.yAxis);
         
         this.gXAxis.select('.axisTitle').attr('transform', 'translate('+this.width/2+',45)');
                    
@@ -131,7 +132,8 @@ class ChartArea2D extends D3CustomChart{
         
         var self = this;
         
-        this.gData.on('mouseover', function(){
+        this.gData
+        .on('mouseover', function(){
             var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
             self.emit('mousein', e);
             self.emit('mousemove', e);
@@ -185,9 +187,20 @@ class ChartArea2D extends D3CustomChart{
         this.x.domain(this._domainX(this._dataDomainX));
         this.y.domain(this._domainY(this._dataDomainY));
         
+        this.emit('domainChange', [{domainX: this._dataDomainX, domainY: this._dataDomainY}]);
+        
         this.unlockDraw(true);
     }
     
     get vCursor(){return this.gData.selectAll('.vCursor');}
     get hCursor(){return this.gData.selectAll('.hCursor');}
+    
+    classed(name, f){
+        if(!isFunction(f)){
+            var a = f;
+            f = d=>a;
+        }
+        this._classed[name] = f;
+        this.requestDraw();
+    }
 }

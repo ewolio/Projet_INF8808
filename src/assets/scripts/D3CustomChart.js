@@ -21,6 +21,7 @@ class D3CustomChart{
         // Graph svg components
         this.gRoot = this.canva.append('g').attr('id', name+'_'+chartType[0]);
         this.chartType.forEach(function(d){self.gRoot.classed(d, true)});
+        this.gRoot.node().d3customchart = this;
         
         
         // ChartArea attributes
@@ -29,6 +30,7 @@ class D3CustomChart{
         this.chainableProperty('marginTop',    20, 'draw');
         this.chainableProperty('marginRight',  20, 'draw');
         this.chainableProperty('marginBottom', 50, 'draw');
+        this.chainableProperty('animDuration', 1000);
         
         this.chainableProperty('data', null, 'dataChanged');
         
@@ -37,7 +39,8 @@ class D3CustomChart{
         this._drawLockCount = 0;
         this._drawRequested = 0;
         
-        $(this.canva.node().ownerDocument.defaultView).resize(function(){self.checkDataChanged();});
+        $(this.canva.node().ownerDocument.defaultView).resize(function(){self.sizeChanged();});
+        setTimeout(100, this.checkDataChanged);
     }
     
     draw(){
@@ -58,6 +61,13 @@ class D3CustomChart{
         if(this._data != null)
             this.dataChanged();
         
+    }
+    
+    sizeChanged(){
+        var prevAnimDuration = this._animDuration;
+        this._animDuration = 0;
+        this.checkDataChanged();
+        this._animDuration = prevAnimDuration;
     }
     
     dataChanged(){
@@ -202,8 +212,10 @@ class D3CustomChart{
         var castValue = function(v){
             if(isFunction(v))
                 return v;
-            else
-                return d=>v;
+            else{
+                var a = v;
+                return d=>a;
+            }
         }
         return this.chainableProperty(name, defaultValue, customSetter, castValue);
     }

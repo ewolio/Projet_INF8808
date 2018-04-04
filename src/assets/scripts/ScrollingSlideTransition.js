@@ -23,6 +23,7 @@ jQuery(document).ready(function($){
         var firstSection = sections.eq(currentSection);
         firstSection.css("top", 0);
         firstSection.show();
+        firstSection.find('.D3CustomChart').each(function(i, s){s.d3customchart.sizeChanged();});
         
         // CREATE SELECTOR
         sections.each(function(i, section){
@@ -32,7 +33,7 @@ jQuery(document).ready(function($){
             var s = $(document.createElement('div')).addClass('tooltip').appendTo($('#slideSelector'));
             s.click(function(){setSection(i);});
             
-            var title = section.attr('title');
+            var title = section.attr('slideTitle');
             if(title[0] == '#'){
                 s.addClass('headerSelector');
                 title = title.substring(1);
@@ -87,6 +88,7 @@ jQuery(document).ready(function($){
             nextS.css('opacity', '0');
             nextS.css('z-index', 1);
             nextS.show();
+            window.dispatchEvent(new Event('resize'));
             
             nextS.animate({opacity: 1}, DURATION, EASING);
             
@@ -96,6 +98,7 @@ jQuery(document).ready(function($){
         }else{
         nextS.css('top', prevI<nextI?'100%':'-100%');
         nextS.show();
+        nextS.find('.D3CustomChart').each(function(i, s){s.d3customchart.sizeChanged();});
         
         if(prevI < nextI){
             prevS.animate({top:'-100%'}, DURATION, EASING);
@@ -119,7 +122,7 @@ jQuery(document).ready(function($){
     function captureScrolling(){
         // Scroll
         var delta = 0;
-        var SCROLL_THRESHOLD = 15;
+        var SCROLL_THRESHOLD = 1;
         
         $(window).on('DOMMouseScroll mousewheel', function(event) {
             // on mouse scroll - check if animate section
