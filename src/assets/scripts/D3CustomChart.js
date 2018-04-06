@@ -172,7 +172,7 @@ class D3CustomChart{
         
         var updateV = function(v){
             v = castValue(v);
-            if(v == undefined || v==self['_' + name])
+            if((v!=null && v == undefined) || v==self['_' + name])
                 return false;
             self['_'+name] = v;
             return true;

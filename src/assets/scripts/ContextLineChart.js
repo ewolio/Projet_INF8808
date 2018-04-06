@@ -13,8 +13,8 @@ class ContextLineChart extends SimpleLineChart{
             this.brush = D3.svg.brush().x(this.x)
                                .on('brush', function(){
                                    self.focusDomain = self.brush.empty() ? self._dataDomainX : self.brush.extent();
-                                   self.emit('brushed',[{empty:self.brush.empty(), extent:self.brush.extent()}]);
-                            });
+                                   self.emit('brush',[{empty:self.brush.empty(), extent:self.brush.extent()}]);
+                             }).on('brushend', function(){self.emit('brushend', [{empty:self.brush.empty(), extent:self.brush.extent()}]);});
             this.chainableProperty('focusDomain', this._dataDomainX, function(){
                 var fullDomain = false;
                 if(self._focusDomain==null){

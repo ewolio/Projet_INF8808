@@ -110,14 +110,14 @@ var D3=null;
         /* PIB */
         var pibContextPlot = new ContextLineChart(d3.select('#SVG_PIB_Context'), 'PIB_Context');
         pibContextPlot.dataX(d=>d.annee).xTitle('Annee').xAxis.tickFormat(d=>d.toString());
-        pibContextPlot.dataY(d=>d['abs all']);
+        pibContextPlot.dataY(d=>d['rel all']);
         pibContextPlot.seriesName(d=>d.pays)
                       .seriesFilter(d=>d.pays=='MEAN')
-                      .data(data);
+                      .domainY([0,150]).data(data);
         
         var pibPlot = new ScatterPlot(d3.select('#SVG_PIB'), 'PIB');
         pibPlot.dataX(d=>d['rel pib']/1000).xTitle('PIB').xUnit('$kUS/hab.').domainX([0, 60])
-               .dataY(d=>d['rel all']).yTitle('Taux de Mortalité').yUnit('/ 100 000 hab.').yTitleShort('Mortalité').domainY([0, 140])
+               .dataY(d=>d['rel all']).yTitle('Taux de Mortalité').yUnit('/ 100 000 hab.').yTitleShort('Mortalité').domainY([0, 150])
                .dataR(d=>d['abs all']);
         pibPlot.seriesName(d=>d.pays);
         
@@ -150,6 +150,13 @@ var D3=null;
             var b = D3.select('#PIB_play i');
             b.classed('fa-pause', false);
             b.classed('fa-play', true);
+        });
+        
+        pibPlot.on('hoveredSerieChanged', function(e){
+            if(e!=null)
+                pibContextPlot.seriesFilter(d=>(d.pays=='MEAN' || d.pays==e.hoveredSerie));
+            else
+                pibContextPlot.seriesFilter(d=>d.pays=='MEAN');
         });
         
         D3.select('#PIB_play').on('click', function(){
@@ -186,13 +193,13 @@ var D3=null;
         
         new SearchBar('SEARCHBAR_global', selectGlobalSerie, resetGlobalSerie, data.map(d=>d.pays), 'Rechercher un pays');
         
-        var pibContextPlot = new ContextLineChart(d3.select('#SVG_global_Context'), 'global_context', true);
-        pibContextPlot.dataX(d=>d.annee).xTitle('Annee').xAxis.tickFormat(d=>d.toString());
-        pibContextPlot.dataY(d=>d['abs all']);
-        pibContextPlot.seriesName(d=>d.pays)
+        var globalContextPlot = new ContextLineChart(d3.select('#SVG_global_Context'), 'global_context', true);
+        globalContextPlot.dataX(d=>d.annee).xTitle('Annee').xAxis.tickFormat(d=>d.toString());
+        globalContextPlot.dataY(d=>d['abs all']);
+        globalContextPlot.seriesName(d=>d.pays)
                       .seriesFilter(d=>d.pays=='MEAN')
                       .data(data);
-        pibContextPlot.on('focusDomainChanged', function(e){global.domainX(e.focusDomain);});
+        globalContextPlot.on('brushend', function(e){global.domainX(globalContextPlot.focusDomain());});
     });
 
 })(d3, searchBar);

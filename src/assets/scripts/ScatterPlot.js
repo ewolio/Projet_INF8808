@@ -29,8 +29,6 @@ class ScatterPlot extends ChartArea2D{
         this.tip.html(this._htmlTip).offset([-9, 0]);
         
         this.r = D3.scale.sqrt().range([0, 40]);
-        
-        this.hoveredDotName = null;
     }
     
     drawData(g, data){
@@ -42,7 +40,8 @@ class ScatterPlot extends ChartArea2D{
                                    .attr('serie', d=>this._seriesName(d));
          
         var self = this;
-        dots.transition()
+        dots.classed('hovered', d=>this._seriesName(d)==this._hoveredSerie)
+            .transition()
             .ease('easeLinear')
             .duration(this._animDuration)
             .attr('r', function(d){ var r = self._dataR(self._seriesData(d)[0]); return notNaN(r)? self.r(r) : undefined; })
@@ -51,12 +50,19 @@ class ScatterPlot extends ChartArea2D{
             .attr('fill', this._dotColor)
             .each('end', function(){dots.attr('visibility', d=>(notNaN(self._dataR(self._seriesData(d)[0]))&&
                                                     notNaN(self._dataX(self._seriesData(d)[0]))&&
-                                                    notNaN(self._dataY(self._seriesData(d)[0])) )?'visible':'hidden')})
+                                                    notNaN(self._dataY(self._seriesData(d)[0])) )?'visible':'hidden')});
         
         for(var c in this._classed){
             var f = this._classed[c];
             dots.classed(c, f);
         };
+        
+        if(this._hoveredSerie!=null){
+            this.tip.show(data.filter(d=>this._seriesName(d)==this._hoveredSerie)[0], 
+                          dots.filter(d=>this._seriesName(d)==this._hoveredSerie).node());
+        }else{
+            this.tip.hide();
+        }
     }
     
     hoverNearestData(mousePos){
@@ -74,17 +80,14 @@ class ScatterPlot extends ChartArea2D{
             if(distance(p) < 25**2){
                 dots.classed('hovered', false);
                 var hoveredDots = dots.filter(d=>self._seriesName(d)==self._seriesName(p));
-                hoveredDots.classed('hovered', true);
-                this.hoveredDotName = p.serieName;
-                this.tip.show(p, hoveredDots.node());
-                D3.selectAll('.d3-tip-'+this.name).style('pointer-events', 'none');
+                
+                this.emit('dataHovered', [{d:hoveredDots.datum(), nearest: p, mousePos: mousePos}]);
+                this.hoveredSerie = this._seriesName(p);
                 return;
             }
         }
-        
-        this.hoveredDotName = null;
-        dots.classed('hovered', false);
-        this.tip.hide();
+        this.emit('dataHovered', [{d:null, nearest: null, mousePos: mousePos}]);
+        this.hoveredSerie = null;
     }
     
     defaultHtmlTip(data){

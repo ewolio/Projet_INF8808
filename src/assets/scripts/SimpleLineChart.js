@@ -35,7 +35,6 @@ class SimpleLineChart extends ChartArea2D{
                                        function(){self.tip.html(self._htmlTip);});
         this.tip.html(this._htmlTip);
         
-        this.hoveredSerie = null;
         this.circleCursorGroup = this.gData.append('g');
         this.circleCursor = this.circleCursorGroup.append('circle').classed('circleCursor', true)
                                                   .attr('visibility', 'hidden')
@@ -47,21 +46,19 @@ class SimpleLineChart extends ChartArea2D{
     }
     
     drawData(g, data){
-        
-        var lines = g.selectAll('path.serieLine')
-                     .data(data);
-                     
+        var lines = g.selectAll('.serieLine').data(data);
+
         lines.exit().remove(); // Remove old lines
         var newLines = lines.enter().append('path').classed('serieLine', true)
                                     .attr('fill', 'none')
                                     .attr('clip-path', 'url(#clipPath'+this.name+')');
-         
         var self = this;
         lines.transition().duration(this._animDuration)
-             .attr('d', d => this.d3Line(this._seriesData(d).filter(d=>notNaN(this._dataX(d)) && notNaN(this._dataY(d)))))
+             .attr('d', d => this.d3Line(this._seriesData(d).filter(d2=>notNaN(this._dataX(d2)) && notNaN(this._dataY(d2)))))
              .attr('stroke', this._lineColor)
              .attr('stroke-width', this._lineWidth);
         lines.classed('disabled', d=>!this._enable(d));
+        lines.classed('hovered', d=>this._seriesName(d)==this._hoveredSerie);
         
         for(var c in this._classed){
             var f = this._classed[c];
@@ -108,10 +105,8 @@ class SimpleLineChart extends ChartArea2D{
                     var previousPath = paths.filter(d=>self._seriesName(d)==this.hoveredSerie);
                 }
                 
-                paths.classed('hovered', false);
                 var newPath = paths.filter(d=>self._seriesName(d)==p.serieName);
-                newPath.classed('hovered', true);
-                this.emit('dataHovered', {d:newPath.datum, nearest: p, mousePos: mousePos});
+                this.emit('dataHovered', [{d:newPath.datum(), nearest: p, mousePos: mousePos}]);
                 this.hoveredSerie = p.serieName;
                 this.tip.show(p, this.circleCursor.node());
                 D3.selectAll('.d3-tip-'+this.name).style('pointer-events', 'none');
@@ -120,10 +115,10 @@ class SimpleLineChart extends ChartArea2D{
         }
         
         this.hoveredSerie = null;
-        paths.classed('hovered', false);
         this.circleCursor.attr('visibility', 'hidden');
-        this.emit('dataHovered', {d:null, mousePos: mousePos});
+        this.emit('dataHovered', [{d:null, nearest: null, mousePos: mousePos}]);
         this.tip.hide();
+        this.requestDraw();
     }
     
     defaultHtmlTip(data){

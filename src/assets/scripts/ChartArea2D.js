@@ -4,6 +4,7 @@ class ChartArea2D extends D3CustomChart{
     constructor(canva, name, chartType=[]){
         chartType.unshift('ChartArea2D');
         super(canva, name, chartType);
+        var self=this;
         
         // Graph svg components
         this.background = this.gRoot.append('g').classed('areaBackground', true);
@@ -32,7 +33,7 @@ class ChartArea2D extends D3CustomChart{
         this.chainableFunctionProperty('dataY', d=>d.y, 'dataChanged');
         this.chainableFunctionProperty('seriesData', d=>d.data, 'dataChanged');
         this.chainableFunctionProperty('seriesName', d=>d.name, 'draw');
-        this.chainableFunctionProperty('seriesFilter', d=>true, 'draw');
+        this.chainableFunctionProperty('seriesFilter', d=>true, 'dataChanged');
         
         this.chainableProperty('xTitle', '', 'draw');
         this.chainableProperty('xUnit', '', 'draw');
@@ -46,6 +47,7 @@ class ChartArea2D extends D3CustomChart{
         
         this.chainableProperty('backgroundLabel', '', 'draw');
         this.chainableProperty('dataHoverable', true);
+        this.chainableProperty('hoveredSerie', null, 'draw');
         
         // ChartArea cache
         this._dataDomainX = [0,0];
@@ -193,7 +195,6 @@ class ChartArea2D extends D3CustomChart{
                         D3.max(data, serie => D3.max(this._seriesData(serie), d => this._dataY(d)))];
         this.x.domain(this._domainX(this._dataDomainX));
         var realDomainY = this._domainY(this._dataDomainY);
-        realDomainY[1] += 5;
         this.y.domain(realDomainY);
         
         this.emit('domainChange', [{domainX: this._dataDomainX, domainY: this._dataDomainY}]);
