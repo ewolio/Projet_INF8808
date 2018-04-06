@@ -140,11 +140,6 @@
 }
 
 
-.ChartArea2D .chartData{
-    pointer-events: visibleFill;
-}
-
-
 /***************************************
 *          CONTEXT CHART               *
  ***************************************/
@@ -165,4 +160,10 @@
 .ContextLineChart .cursor{
     stroke: #333;
     stroke-width: 2;
+}
+
+.ContextLineChart .brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
 }

@@ -11,7 +11,34 @@ class ContextLineChart extends SimpleLineChart{
         
         if(brush){
             this.brush = D3.svg.brush().x(this.x)
-                               .on('brush', function(){});
+                               .on('brush', function(){
+                                   self.focusDomain = self.brush.empty() ? self._dataDomainX : self.brush.extent();
+                                   self.emit('brushed',[{empty:self.brush.empty(), extent:self.brush.extent()}]);
+                            });
+            this.chainableProperty('focusDomain', this._dataDomainX, function(){
+                var fullDomain = false;
+                if(self._focusDomain==null){
+                    self._focusDomain = self._dataDomainX;
+                    fullDomain = true;
+                }else if(self._focusDomain[0]==self._dataDomainX[0] && self._focusDomain[1]==self._dataDomainX[1])
+                    fullDomain = true;
+                
+                if((self.brush.empty()!= fullDomain) || (!fullDomain && (self._focusDomain[0]!=self.brush.extent()[0] || self._focusDomain[1]!=self.brush.extent()[1]))){
+                    // Update brush
+                    if(fullDomain){
+                        self.brush.clear();
+                        self.brush.event();
+                    }else{
+                        self.brush.extent(self._focusDomain);
+                        self.brush();
+                        self.brush.event();
+                    }
+                }
+            });
+            this.gBrush = this.gData.append('g').attr('class', 'brush');
+            this.on('dataDrawn', function(){self.gBrush.attr('width', self.width).attr('height', self.height).call(self.brush)
+                                                .selectAll('rect').attr('height', self.height);});
+            this.dataHoverable(false);
         }else{
             this.brush = null;
             this.cursor = this.gData.append('line').classed('cursor', true)
@@ -20,7 +47,6 @@ class ContextLineChart extends SimpleLineChart{
             
             var updateCursorPos = function(){self.cursorX = self.x.invert(D3.mouse(this)[0]);};
             this.gRoot.call(D3.behavior.drag().on('drag', updateCursorPos).on('dragstart', updateCursorPos))
-            this.on('click', updateCursorPos);
             this.on('dataDrawn', function(){
                 var x = self.x(self.cursorX());
                 self.cursor.attr('y2', self.height+5).attr('x1',x).attr('x2',x); 

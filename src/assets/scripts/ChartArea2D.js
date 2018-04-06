@@ -45,6 +45,7 @@ class ChartArea2D extends D3CustomChart{
         this.chainableFunctionProperty('domainY', d=>d, 'dataChanged');
         
         this.chainableProperty('backgroundLabel', '', 'draw');
+        this.chainableProperty('dataHoverable', true);
         
         // ChartArea cache
         this._dataDomainX = [0,0];
@@ -61,6 +62,10 @@ class ChartArea2D extends D3CustomChart{
         // Background
         this.background.append('rect').classed('backgroundSurface', true);
         this.background.append('text').classed('backgroundLabel', true);
+        
+        this.clipRect = this.gData.append('clipPath').attr('id', 'clipPath'+this.name)
+                                  .append('rect');
+        
         // Cursors
         this.gData.append('line').classed('vCursor', true).classed('lineCursor', true)
                                  .attr('visibility', 'hidden');
@@ -98,7 +103,6 @@ class ChartArea2D extends D3CustomChart{
         }).on('click', function(){
             var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
             self.emit('click', e);
-            console.log('click');
         }).on('mousedown', function(){
             self._mouseDown = true;
             var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
@@ -120,14 +124,14 @@ class ChartArea2D extends D3CustomChart{
         this.y.range([this.height, 0]);
         this.gYAxis.transition().duration(this._animDuration).call(this.yAxis);
         
-        this.gXAxis.select('.axisTitle').attr('transform', 'translate('+this.width/2+',45)');
+        this.gXAxis.select('.axisTitle').attr('transform', 'translate('+this.width/2+',35)');
                    
         if(this._xUnit!='')
             this.gXAxis.select('text').html('<tspan class="axisTitleText">'+this._xTitle+'</tspan> <tspan class="axisUnitText"> ('+this._xUnit+')</tspan>');
         else
             this.gXAxis.select('text').html('<tspan class="axisTitleText">'+this._xTitle+'</tspan>');
             
-        this.gYAxis.select('.axisTitle').attr('transform', 'translate(-45, '+(this.height/2)+')rotate(-90)');
+        this.gYAxis.select('.axisTitle').attr('transform', 'translate(-50, '+(this.height/2)+')rotate(-90)');
         if(this._yUnit!='')
             this.gYAxis.select('text').html('<tspan class="axisTitleText">'+this._yTitle+'</tspan> <tspan class="axisUnitText"> ('+this._yUnit+')</tspan>');
         else
@@ -136,10 +140,11 @@ class ChartArea2D extends D3CustomChart{
         // Draw data
         this.background.select('.backgroundSurface').attr('width', toPx(this.width)).attr('height', toPx(this.height));
         this.background.select('.backgroundLabel').html(this._backgroundLabel);
+        this.clipRect.attr('width', toPx(this.width)).attr('height', toPx(this.height));
         try{
             var bckLabelBBox = this.background.select('.backgroundLabel').node().getBBox();
             this.background.select('.backgroundLabel').attr('x', toPx(this.width - bckLabelBBox.width - 20))
-                                                    .attr('y', toPx(this.height - 20));
+                                                      .attr('y', toPx(this.height - 20));
         }catch(error){}
         
                                                   
@@ -170,7 +175,8 @@ class ChartArea2D extends D3CustomChart{
             vCursor.attr('x1', mousePos[0]).attr('x2', mousePos[0]);
             hCursor.attr('y1', mousePos[1]).attr('y2', mousePos[1]);
         }
-        this.hoverNearestData(mousePos);
+        if(this._dataHoverable)
+            this.hoverNearestData(mousePos);
     }
     
     hoverNearestData(mousePos){}
@@ -186,7 +192,9 @@ class ChartArea2D extends D3CustomChart{
         this._dataDomainY  = [D3.min(data, serie => D3.min(this._seriesData(serie), d => this._dataY(d))),
                         D3.max(data, serie => D3.max(this._seriesData(serie), d => this._dataY(d)))];
         this.x.domain(this._domainX(this._dataDomainX));
-        this.y.domain(this._domainY(this._dataDomainY));
+        var realDomainY = this._domainY(this._dataDomainY);
+        realDomainY[1] += 5;
+        this.y.domain(realDomainY);
         
         this.emit('domainChange', [{domainX: this._dataDomainX, domainY: this._dataDomainY}]);
         

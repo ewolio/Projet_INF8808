@@ -20,6 +20,8 @@ class SimpleLineChart extends ChartArea2D{
         super(canva, name, chartType);
         var self = this;
         
+        this.marginBottom = 50;
+        
         // D3 functions components
         this.d3Line = d3.svg.line()
                         .x(d => this.x(this._dataX(d)))
@@ -51,7 +53,8 @@ class SimpleLineChart extends ChartArea2D{
                      
         lines.exit().remove(); // Remove old lines
         var newLines = lines.enter().append('path').classed('serieLine', true)
-                                    .attr('fill', 'none');
+                                    .attr('fill', 'none')
+                                    .attr('clip-path', 'url(#clipPath'+this.name+')');
          
         var self = this;
         lines.transition().duration(this._animDuration)
@@ -108,6 +111,7 @@ class SimpleLineChart extends ChartArea2D{
                 paths.classed('hovered', false);
                 var newPath = paths.filter(d=>self._seriesName(d)==p.serieName);
                 newPath.classed('hovered', true);
+                this.emit('dataHovered', {d:newPath.datum, nearest: p, mousePos: mousePos});
                 this.hoveredSerie = p.serieName;
                 this.tip.show(p, this.circleCursor.node());
                 D3.selectAll('.d3-tip-'+this.name).style('pointer-events', 'none');
@@ -118,6 +122,7 @@ class SimpleLineChart extends ChartArea2D{
         this.hoveredSerie = null;
         paths.classed('hovered', false);
         this.circleCursor.attr('visibility', 'hidden');
+        this.emit('dataHovered', {d:null, mousePos: mousePos});
         this.tip.hide();
     }
     

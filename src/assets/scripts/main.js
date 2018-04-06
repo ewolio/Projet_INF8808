@@ -108,7 +108,7 @@ var D3=null;
         
         /****************************************************************************************************/
         /* PIB */
-        var pibContextPlot = new ContextLineChart(d3.select('#SVG_PIB_Context'), 'PIB');
+        var pibContextPlot = new ContextLineChart(d3.select('#SVG_PIB_Context'), 'PIB_Context');
         pibContextPlot.dataX(d=>d.annee).xTitle('Annee').xAxis.tickFormat(d=>d.toString());
         pibContextPlot.dataY(d=>d['abs all']);
         pibContextPlot.seriesName(d=>d.pays)
@@ -172,6 +172,7 @@ var D3=null;
                     .yTitle('Taux de Mortalité').yUnit('per 100 000 hab.');
         global.seriesName(d => d.pays);
         global.xAxis.tickFormat(d=>d.toString());
+        global.domainY(d=>[0, d[1]+10])
         global.data(data.filter(d=>d.pays!='MEAN'));
         
         var selectGlobalSerie = function(s){
@@ -184,6 +185,14 @@ var D3=null;
         }
         
         new SearchBar('SEARCHBAR_global', selectGlobalSerie, resetGlobalSerie, data.map(d=>d.pays), 'Rechercher un pays');
+        
+        var pibContextPlot = new ContextLineChart(d3.select('#SVG_global_Context'), 'global_context', true);
+        pibContextPlot.dataX(d=>d.annee).xTitle('Annee').xAxis.tickFormat(d=>d.toString());
+        pibContextPlot.dataY(d=>d['abs all']);
+        pibContextPlot.seriesName(d=>d.pays)
+                      .seriesFilter(d=>d.pays=='MEAN')
+                      .data(data);
+        pibContextPlot.on('focusDomainChanged', function(e){global.domainX(e.focusDomain);});
     });
 
 })(d3, searchBar);

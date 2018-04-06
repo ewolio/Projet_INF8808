@@ -54,3 +54,14 @@
     right: 50px;
     top: 10px;
 }
+
+/* Main Graph */
+#SVG_global{
+    display: block;
+    height: 90%
+}
+
+#SVG_global_Context{
+    display: block;
+    height: 8%;
+}
