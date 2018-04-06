@@ -19,8 +19,8 @@ class ContextLineChart extends SimpleLineChart{
             this.chainableProperty('cursorX', this._dataDomainX[0], 'draw');
             
             var updateCursorPos = function(){self.cursorX = self.x.invert(D3.mouse(this)[0]);};
-            this.hoverArea.call(D3.behavior.drag().on('drag', updateCursorPos).on('dragstart', updateCursorPos))
-                          .on('click', updateCursorPos);
+            this.gRoot.call(D3.behavior.drag().on('drag', updateCursorPos).on('dragstart', updateCursorPos))
+            this.on('click', updateCursorPos);
             this.on('dataDrawn', function(){
                 var x = self.x(self.cursorX());
                 self.cursor.attr('y2', self.height+5).attr('x1',x).attr('x2',x); 

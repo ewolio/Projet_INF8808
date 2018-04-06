@@ -23,10 +23,6 @@
     fill: #333;
 }
 
-.ChartArea2D .hoverArea{
-    z-index: 3;
-}
-
 
 /***************************************
  *            CHART LINE               *

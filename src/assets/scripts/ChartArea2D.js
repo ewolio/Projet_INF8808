@@ -81,6 +81,33 @@ class ChartArea2D extends D3CustomChart{
         this.hoverArea = this.gData.append('rect').classed('dataHoverArea', true)
                                    .attr('fill', '#fff')
                                    .attr('opacity', 0.00001);
+                                   
+        var self = this;
+        this.gRoot.on('mouseover', function(){
+            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
+            self.emit('mousein', e);
+            self.emit('mousemove', e);
+        }).on('mousemove', function(){
+            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
+            self.emit('mousemove', e);
+        }).on('mouseout', function(){
+            self._mouseDown = false;
+            var e = [{pos:null, mouseDown:self._mouseDown}];
+            self.emit('mouseout', e);
+            self.emit('mousemove', e);
+        }).on('click', function(){
+            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
+            self.emit('click', e);
+            console.log('click');
+        }).on('mousedown', function(){
+            self._mouseDown = true;
+            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
+            self.emit('mousedown', e);
+        }).on('mouseup', function(){
+            self._mouseDown = false;
+            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
+            self.emit('mouseup', e);
+        });
     }
     
     drawChart(gRoot, data){
@@ -116,7 +143,7 @@ class ChartArea2D extends D3CustomChart{
         }catch(error){}
         
                                                   
-        this.gData.select('.dataHoverArea').attr('width', toPx(this.width)).attr('height', toPx(this.height));
+        this.hoverArea.attr('width', toPx(this.width)).attr('height', toPx(this.height));
         
         data = this._data.filter(d => this._seriesFilter(d));
         this.drawData(this.gData, data);
@@ -131,34 +158,6 @@ class ChartArea2D extends D3CustomChart{
         
         hCursor.attr('x1', 0)
         hCursor.attr('x2', this.width)
-        
-        var self = this;
-        
-        this.gData
-        .on('mouseover', function(){
-            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
-            self.emit('mousein', e);
-            self.emit('mousemove', e);
-        }).on('mousemove', function(){
-            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
-            self.emit('mousemove', e);
-        }).on('mouseout', function(){
-            self._mouseDown = false;
-            var e = [{pos:null, mouseDown:self._mouseDown}];
-            self.emit('mouseout', e);
-            self.emit('mousemove', e);
-        }).on('click', function(){
-            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
-            self.emit('click', e);
-        }).on('mousedown', function(){
-            self._mouseDown = true;
-            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
-            self.emit('mousedown', e);
-        }).on('mouseup', function(){
-            self._mouseDown = false;
-            var e = [{pos:D3.mouse(this), mouseDown:self._mouseDown}];
-            self.emit('mouseup', e);
-        });
         
         this.tipRootElement.call(this.tip);
     }
