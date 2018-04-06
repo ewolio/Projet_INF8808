@@ -62,12 +62,11 @@ class ScatterPlot extends ChartArea2D{
     hoverNearestData(mousePos){
         var dots = this.gData.selectAll('circle');
         
-        if(mousePos !== null){
+        if(mousePos !== null && dots.data().length){
             var mouseX = mousePos[0], mouseY = mousePos[1];
             
-            
             var self = this;
-            var distance = d => (this.x(this._dataX(this._seriesData(d)[0]))-mouseX)**2 + (this.y(this._dataY(this._seriesData(d)[0]))-mouseY)**2;
+            var distance = d => (self.x(self._dataX(self._seriesData(d)[0]))-mouseX)**2 + (self.y(self._dataY(self._seriesData(d)[0]))-mouseY)**2;
             
             var dotsData = dots.data();
             var p = dotsData[argmin(dotsData.map(distance))];
@@ -78,6 +77,7 @@ class ScatterPlot extends ChartArea2D{
                 hoveredDots.classed('hovered', true);
                 this.hoveredDotName = p.serieName;
                 this.tip.show(p, hoveredDots.node());
+                D3.selectAll('.d3-tip-'+this.name).style('pointer-events', 'none');
                 return;
             }
         }

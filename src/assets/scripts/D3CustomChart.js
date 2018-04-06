@@ -106,7 +106,7 @@ class D3CustomChart{
     get canvaWidth(){ return this._canvaShape[0]; }
     get canvaHeight(){ return this._canvaShape[1]; }
     
-    on(event, task){ return this.addEventListener(event, task); }
+    on(event, task){ this.addEventListener(event, task); return this;}
     
     addEventListener(name, handler){
         if (this._events.hasOwnProperty(name))
@@ -170,23 +170,35 @@ class D3CustomChart{
         else if(customSetter == 'dataChanged')
             customSetter = function(){self.checkDataChanged();};
         
+        var updateV = function(v){
+            v = castValue(v);
+            if(v == undefined || v==self['_' + name])
+                return false;
+            self['_'+name] = v;
+            return true;
+        }
+        
         if(customSetter!=null)
             this['_'+name+'Setter'] = function(v){
-                v = castValue(v);
-                if(v == undefined)
-                    return;
+                var e = {};
+                e[name+'Old'] = self['_'+name];
                 
-                this['_'+name] = v;
+                if(!updateV(v))
+                    return false;
                 customSetter();
+                e[name] = self['_'+name];
+                self.emit(name+'Changed', [e]);
+                return true;
             };
         else
-            this['_'+name+'Setter'] = function(v){ 
-                v = castValue(v);
-                if(v == undefined)
-                    return;
-                
-                this['_'+name] = v; 
-            };
+            this['_'+name+'Setter'] = function(v){
+                var e = {};
+                e[name+'Old'] = self['_'+name];
+                if(updateV(v)){
+                    e[name] = self['_'+name];
+                    self.emit(name+'Changed', [e]);
+                }
+            }
         
         // Accessor object
         var accessor = function(arg=null){

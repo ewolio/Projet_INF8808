@@ -133,11 +133,11 @@ var D3=null;
             return result;
         };
         
-        var year = pibContextPlot.cursorX;
+        var year = pibContextPlot.cursorX();
         pibPlot.backgroundLabel(year).data(selectYear(year, data));
         
-        pibContextPlot.on('cursorMoved', function(e){
-            var x = Math.ceil(e.x-0.1);
+        pibContextPlot.on('cursorXChanged', function(e){
+            var x = Math.ceil(e.cursorX-0.1);
             if(x!=year){
                 pibPlot.lockDraw()
                     .backgroundLabel(x)

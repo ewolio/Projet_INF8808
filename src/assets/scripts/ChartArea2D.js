@@ -15,7 +15,7 @@ class ChartArea2D extends D3CustomChart{
                                             .classed('yaxis', true);
         this.gData = this.gRoot.append('g').attr('id', name+'_ChartData')
                                            .classed('chartData', true);
-        this.tip = d3.tip().attr('class', 'd3-tip');
+        this.tip = d3.tip().attr('class', 'd3-tip d3-tip-'+name);
         this.tipRootElement = this.gData;
         
         this.initChart();
@@ -78,7 +78,9 @@ class ChartArea2D extends D3CustomChart{
         
         this.on('mousemove', function(e){self.mousePosChanged(e.pos)});
                                  
-        this.gData.append('rect').classed('dataHoverArea', true).attr('fill', '#fff').attr('opacity', 0.00001);
+        this.hoverArea = this.gData.append('rect').classed('dataHoverArea', true)
+                                   .attr('fill', '#fff')
+                                   .attr('opacity', 0.00001);
     }
     
     drawChart(gRoot, data){

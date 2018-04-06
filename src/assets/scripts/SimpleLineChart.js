@@ -110,6 +110,7 @@ class SimpleLineChart extends ChartArea2D{
                 newPath.classed('hovered', true);
                 this.hoveredSerie = p.serieName;
                 this.tip.show(p, this.circleCursor.node());
+                D3.selectAll('.d3-tip-'+this.name).style('pointer-events', 'none');
                 return;
             }
         }
