@@ -27,6 +27,21 @@ var D3=null;
         var data = preproccess(roadIncident, population, pib, countries);
         
         
+        console.log(countries);
+        
+        // Echelle de couleur
+        var continentColor = {
+            'Amérique du Sud': '#73027',
+            'Amérique du Nord': '#ff2000',
+            'Amérique Centrale': '#ff7f00',
+            'Océanie': '#2166ac',
+            'Europe Est': '#33a02c',
+            'Europe Ouest': '#71c671',
+            'Moyen Orient': '#000000',
+            'Asie': '#ffff33',
+            'Afrique': '#000000'
+        };
+        
         /***** Création des Graphes *****/
     
         /****************************************************************************************************/
@@ -118,6 +133,7 @@ var D3=null;
         var pibPlot = new ScatterPlot(d3.select('#SVG_PIB'), 'PIB');
         pibPlot.dataX(d=>d['rel pib']/1000).xTitle('PIB').xUnit('$kUS/hab.').domainX([0, 60])
                .dataY(d=>d['rel all']).yTitle('Taux de Mortalité').yUnit('/ 100 000 hab.').yTitleShort('Mortalité').domainY([0, 150])
+               .dotColor(d => continentColor[countries[d.pays].continent])
                .dataR(d=>d['abs all']);
         pibPlot.seriesName(d=>d.pays);
         

@@ -112,7 +112,5 @@ var preproccess = function(roadIncident, population, PIB, countries){
         data.push({pays: country, data: d_country});
     }
     
-    console.log(data);
-    
     return data;
 }

@@ -1,68 +1,68 @@
 pays,code,Continent
 Argentina,ARG,Amérique du Sud
 Australia,AUS,Océanie
-Austria,AUT,Europe
+Austria,AUT,Europe Ouest
 Azerbaijan,AZE,Asie
 Bahrain,BHR,Moyen Orient
-Belarus,BLR,Europe
-Belgium,BEL,Europe
-Bosnia and Herzegovina,BIH,Europe
+Belarus,BLR,Europe Est
+Belgium,BEL,Europe Ouest
+Bosnia and Herzegovina,BIH,Europe Est
 Brazil,BRA,Amérique du Sud
-Bulgaria,BGR,Europe
+Bulgaria,BGR,Europe Est
 Canada,CAN,Amérique du Nord
 Chile,CHL,Amérique du Sud
 Colombia,COL,Amérique du Sud
 Costa Rica,CRI,Amérique Centrale
-Croatia,HRV,Europe
+Croatia,HRV,Europe Est
 Cuba,CUB,Amérique Centrale
-Cyprus,CYP,Europe
-Czech Republic,CZE,Europe
-Denmark,DNK,Europe
+Cyprus,CYP,Europe Ouest
+Czech Republic,CZE,Europe Est
+Denmark,DNK,Europe Ouest
 Egypt,EGY,Afrique
 El Salvador,SLV,Amérique Centrale
-Estonia,EST,Europe
-Finland,FIN,Europe
-France,FRA,Europe
+Estonia,EST,Europe Est
+Finland,FIN,Europe Est
+France,FRA,Europe Ouest
 Georgia,GEO,Moyen Orient
-Germany,DEU,Europe
-Greece,GRC,Europe
+Germany,DEU,Europe Ouest
+Greece,GRC,Europe Ouest
 Guatemala,GTM,Amérique Centrale
-Hungary,HUN,Europe
-Ireland,IRL,Europe
+Hungary,HUN,Europe Est
+Ireland,IRL,
 Israel,ISR,Moyen Orient
-Italy,ITA,Europe
+Italy,ITA,
 Japan,JPN,Asie
 Kazakhstan,KAZ,Asie
 Kuwait,KWT,Moyen Orient
 Kyrgyzstan,KGZ,Asie
-Latvia,LVA,Europe
-Lithuania,LTU,Europe
+Latvia,LVA,Europe Est
+Lithuania,LTU,Europe Est
 Mauritius,MUS,Afrique
 Mexico,MEX,Amérique Centrale
-Moldova,MDA,Europe
-Netherlands,NLD,Europe
+Moldova,MDA,Europe Est
+Netherlands,NLD,Europe Ouest
 New Zealand,NZL,Océanie
-Norway,NOR,Europe
+Norway,NOR,Europe Ouest
 Panama,PAN,Amérique Centrale
 Paraguay,PRY,Amérique du Sud
 Philippines,PHL,Océanie
-Poland,POL,Europe
-Portugal,PRT,Europe
-Romania,ROU,Europe
+Poland,POL,Europe Est
+Portugal,PRT,Europe Ouest
+Romania,ROU,Europe Est
 Russia,RUS,Asie
-Serbia,SRB,Europe
+Serbia,SRB,Europe Est
 Singapore,SGP,Asie
-Slovakia,SVK,Europe
-Slovenia,SVN,Europe
+Slovakia,SVK,Europe Est
+Slovenia,SVN,Europe Est
 South Korea,KOR,Asie
-Spain,ESP,Europe
+Spain,ESP,Europe Ouest
 Sri Lanka,LKA,Asie
-Sweden,SWE,Europe
-Switzerland,CHE,Europe
+Sweden,SWE,Europe Ouest
+Switzerland,CHE,Europe Ouest
 Trinidad and Tobago,TTO,Amérique Centrale
 Turkmenistan,TKM,Asie
-Ukraine,UKR,Europe
-United Kingdom,GBR,Europe
+Ukraine,UKR,Europe Est
+United Kingdom,GBR,Europe Ouest
 United States of America,USA,Amérique du Nord
 Uruguay,URY,Amérique du Sud
 Uzbekistan,UZB,Asie
