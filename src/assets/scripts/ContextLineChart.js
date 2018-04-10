@@ -44,7 +44,7 @@ class ContextLineChart extends SimpleLineChart{
             this.cursor = this.gData.append('line').classed('cursor', true)
                                     .attr('y1', 0).attr('y2', this.height+5);
             this.chainableProperty('cursorX', this.x.domain()[0], 'draw');
-            
+            this.x.clamp(true);
             var updateCursorPos = function(){self.cursorX = self.x.invert(D3.mouse(this)[0]);};
             this.gRoot.call(D3.behavior.drag().on('drag', updateCursorPos).on('dragstart', updateCursorPos))
             this.on('dataDrawn', function(){
