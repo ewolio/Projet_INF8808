@@ -15,7 +15,7 @@ class ChronologicalOverlay extends D3CustomChart{
         });
         
         this.tip = d3.tip().attr('class', 'd3-tip')
-                           .direction('s').offset([10, 0]);
+                           .direction('e').offset([-2, 10]);
         
         this.chainableFunctionProperty('dataX', d=>d.x, 'draw');
         this.chainableFunctionProperty('color', d=>d.color!==undefined?d.color:'#111', 'draw');
@@ -24,6 +24,11 @@ class ChronologicalOverlay extends D3CustomChart{
         this.chainableFunctionProperty('htmlTip', d => this.defaultHtmlTip(d), 
                                        function(){self.tip.html(self._htmlTip);});
         this.tip.html(this._htmlTip);
+        
+        this.marginLeft(area2d.marginLeft())
+            .marginRight(area2d.marginRight())
+            .marginTop(area2d.marginTop())
+            .marginBottom(area2d.marginBottom());
         
         this._classed = {};
     }

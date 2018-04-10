@@ -18,7 +18,16 @@
         </div>
 
         <div class="panel">
-            <p> Story telling </p>
+            <h1> Contexte </h1>
+            <p class='centered'>
+                Le but ce site est d'étudier l'évolution de la mortalité sur les routes dans le temps. 
+                <br/>
+                <br/>
+                Notre <a href='http://www.who.int/violence_injury_prevention/surveillance/databases/mortality/en/'>jeu de données</a> a été collecté par l’OMC (Organisation Mondiale du Commerce) et présente l'évolution de la proportion par habitants de décès dus aux accidents de la route par tranche d'age pour 69 pays entre 1950 et 2008.
+                <br/>
+                <br/>
+                Nous avons fait le choix de commencer par observer les tendances par pays avant de nous concentrer sur le cas de la France en matière de législation et d'avancées technologiques pour terminer sur la mise correlation entre la mortalité sur les routes et le PIB par habitant. 
+            </p>
         </div> 
     </section>
     
@@ -32,6 +41,9 @@
             </div>
             <div class='storySide'>
                 <h3>Story telling</h3>
+                <p>
+                    D'après l'OMS les accidents de la route font près de 1,3 million de morts dans le monde chaque année.
+                </p>
             </div>
         </div>
     </section>
@@ -44,10 +56,19 @@
         <div class="panel">
             <div class='graphSide'>
                 <svg id='SVG_france'></svg>
-                <div class='legend'><label id='stackToggle_france' class='ToggleSwitch'></label></div>
+                <div class='legend'><label id='stackToggle_france' class='ToggleSwitch'>Cumul:</label></div>
             </div>
             <div class='storySide'>
-                <h3>Story telling</h3>
+                <h3>Focus sur la France</h3>
+                <p>
+                    La circulation sur les routes publiques est une problématique antérieure à l'invention de l'automobile. </br>
+                    Dès 1804 Napoléon instaure la circulation obligatoire sur la droite de la chaussée et en 1854 apparaissent les prémices
+                     de la police routièr actuelle avec la création de la police du roulage et des messageries publiques. </br>
+                    Mais ce n'est qu'à partir du début du 20ème siècle que les premières règles routières interviennent comme l'unification du 
+                    code de la route en 1921 ou l'apparition de la ceinture de sécurité au début des années 70, ce sont ces règles qui,
+                     couplées avec les inovations téchniques sur les véhicules et sur les routes ont permis de faire décroitre la mortalité entre 1970 et 2008 </br>
+                    Toutefois les accidents de la route restent la première cause de décès chez les 15-29 ans. </br>
+                </p>
             </div>
         </div>
     </section>
@@ -60,10 +81,14 @@
         <div class="panel">
             <div class='graphSide'>
                 <svg id='SVG_legislation'></svg>
-                <div class='legend'><label id='stackToggle_legislation' class='ToggleSwitch'></label></div>
+                <div class='legend'><label id='stackToggle_legislation' class='ToggleSwitch'>Cumul:</label></div>
             </div>
             <div class='storySide'>
-                <h3>Story telling</h3>
+                <h3>Impact de la législation</h3>
+                <p>
+                    On observe un léger décallage entre l'édiction des lois et la chute de la mortalité sur la route, dû à l'écart de 1 à trois
+                     ans entre l'édiction d'une loi, sa mise en place et son application par les citoyen. </br>
+                </p>
             </div>
         </div>
     </section>
@@ -76,10 +101,13 @@
         <div class="panel">
             <div class='graphSide'>
                 <svg id='SVG_techniques'></svg>
-                <div class='legend'><label id='stackToggle_techniques' class='ToggleSwitch'></label></div>
+                <div class='legend'><label id='stackToggle_techniques' class='ToggleSwitch'>Cumul:</label></div>
             </div>
             <div class='storySide'>
-                <h3>Story telling</h3>
+                <h3>Impact de la technologie</h3>
+                 <p>
+                    Contrairement à la législation, les avancées technologiques ont un impact plus lent sur la mortalité. En effet, il faut attendre le renouvellement progressif du parc automobile national pour que ces avancées soient effectives. </br>
+                </p>
             </div>
         </div>
     </section>
@@ -94,9 +122,16 @@
                 <div class='flatButton' id='PIB_play'> <i class="fa fa-play"></i> </div>
                 <svg id='SVG_PIB_Context'></svg>
                 <svg id='SVG_PIB'></svg>
+                <div id="SEARCHBAR_PIB" class='search-bar'></div>
             </div>
             <div class='storySide'>
             <h3>Story telling</h3>
+            <p>
+                Même s'il n'y a pas de lien direct entre la mortalité sur la route et le PIB par habitant d'un pays, comme en témoigne la faible mortalité
+                 sur les routes d'un pays comme l'Uruguay, il reste un bon indicateur de la capacité d'un pays à moderniser ses infrastructures. </br>
+                En l'occurence on observe un réel écart à partir de 15 000 $USD par habitant, seuil à partir duquel la mortalité chute brutalement.
+            </p>
+            <img src='assets/img/map.jpg' style='width:100%;height:auto;position:absolute;bottom:20px;left:0;'/>
             </div>
         </div>
     </section>

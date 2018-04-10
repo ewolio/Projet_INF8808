@@ -29,23 +29,24 @@
  ***************************************/
 
 .serieLine{
-    stroke: #999;
+    stroke: #111;
+    opacity: 0.4;
     stroke-width: 0.5;
 }
 
 .serieLine.hovered{
-    stroke: #111;
-    stroke-width: 0.5; 
+    opacity: 0.9;
+    stroke-width: 1.5; 
 }
 
 .serieLine.disabled{
-    stroke: #ddd;
+    opacity: 0.2;
     stroke-width: 0.5; 
 }
 
 .serieLine.selected{
-    stroke: #111;
-    stroke-width: 1;
+    opacity: 1;
+    stroke-width: 2;
     z-index: 2;
 }
 
@@ -69,29 +70,6 @@
 .ChronologicalOverlay .vLine{
     stroke: #111;
     stroke-width: 1;
-}
-
-.serieLine.hovered{
-    stroke: #111;
-    stroke-width: 0.5; 
-}
-
-.serieLine.disabled{
-    stroke: #ddd;
-    stroke-width: 0.5; 
-}
-
-.serieLine.selected{
-    stroke: #111;
-    stroke-width: 1;
-    z-index: 2;
-}
-
-.serieArea{
-    opacity: 0.4;
-}
-.serieArea.hovered{
-    opacity: 0.8;
 }
 
 /***************************************

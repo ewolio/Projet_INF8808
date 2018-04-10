@@ -9,6 +9,7 @@ class SearchBar{
 
         this.validate = validate;
         this.reset = reset;
+        this.values = values;
                                
         new autoComplete({
             selector: selector+" input",
@@ -35,7 +36,7 @@ class SearchBar{
         });
 
         // Ajout d'évènements sur la barre de recherche et le bouton.
-        this.searchBarInput = D3.select(selector+" input");
+        this.searchBarInput = D3.select(selector).select("input");
         this.searchBarInput.on("keydown", function () {
             if (D3.event.key === "Enter") {
                 self.validateInput();
@@ -55,13 +56,13 @@ class SearchBar{
         function normalize(str) {
           return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         }
-        var value = self.searchBarInput.node().value.toLowerCase();
+        var value = this.searchBarInput.node().value.toLowerCase();
         if (!value) {
           return;
         }
         var currentValue = normalize(value);
-        const countryFound = data.find(function(zone) {
-          return normalize(zone.toLowerCase()) === currentValue;
+        const countryFound = this.values.find(function(v) {
+          return normalize(v.toLowerCase()) === currentValue;
         });
         if (countryFound) {
           this.validate(countryFound);

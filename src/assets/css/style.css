@@ -4,7 +4,6 @@ body {
   text-align: center;
 }
 
-
 .titleBox {
   position: absolute;
   top: 0;
@@ -31,6 +30,20 @@ body {
 .panel svg{
     width: 100%;
     height: 100%;
+}
+
+.panel p{
+    text-align: justify;
+    position: absolute;
+    width: 80%;
+    left: 10%;
+}
+
+.panel p.centered{
+    position: absolute;
+    width: 50%;
+    left: 25%;
+    text-align: justify;
 }
 
 /***** Side Style *****/

@@ -29,7 +29,7 @@ class SimpleLineChart extends ChartArea2D{
                         .interpolate("cardinal");
                         
         this.chainableFunctionProperty('lineColor', d => d.color!==undefined ? d.color : '#444', 'draw'); 
-        this.chainableFunctionProperty('lineWidth', d => d.width!==undefined ? d.width : 0.5, 'draw'); 
+        this.chainableFunctionProperty('lineWidth', d => d.width!==undefined ? d.width : undefined, 'draw'); 
         this.chainableFunctionProperty('enable', d=>true, 'draw');
         this.chainableFunctionProperty('htmlTip', d => this.defaultHtmlTip(d), 
                                        function(){self.tip.html(self._htmlTip);});
@@ -41,7 +41,7 @@ class SimpleLineChart extends ChartArea2D{
                                                   .attr('r', 2);
                                                        
         this.tipRootElement = this.circleCursorGroup;
-        this.tip.direction('w').offset([-2, -10]);
+        this.tip.direction('e').offset([-2, +10]);
                                     
     }
     
@@ -71,6 +71,7 @@ class SimpleLineChart extends ChartArea2D{
     
     hoverNearestData(mousePos){
         var paths = this.gData.selectAll('path');
+        var self = this;
         
         if(mousePos !== null){
             var mouseX = mousePos[0], mouseY = mousePos[1];
@@ -101,14 +102,13 @@ class SimpleLineChart extends ChartArea2D{
                 this.circleCursorGroup.attr('transform', 'translate('+p.screenX+', '+p.screenY+')');
                 this.vCursor.attr('x1', p.screenX).attr('x2', p.screenX);
                 
-                if(this.hoveredSerie == null){
-                    this.circleCursor.attr('visibility', 'visible');
-                }
-                else if(this.hoveredSerie != p.serieName){
+                if(this.hoveredSerie != p.serieName){
                     var previousPath = paths.filter(d=>self._seriesName(d)==this.hoveredSerie);
                 }
                 
                 var newPath = paths.filter(d=>self._seriesName(d)==p.serieName);
+                this.circleCursor.attr('visibility', 'visible')
+                                 .style('stroke', function(){return self._lineColor(newPath.datum())});
                 this.emit('dataHovered', [{d:newPath.datum(), nearest: p, mousePos: mousePos}]);
                 this.hoveredSerie = p.serieName;
                 this.tip.show(p, this.circleCursor.node());
@@ -127,9 +127,10 @@ class SimpleLineChart extends ChartArea2D{
     defaultHtmlTip(data){
         return `
             <h3>  %x </h3>
-            <p><b>%n</b>: %y</p>
+            <p><b>%n</b>: %y %u</p>
         `.replace('%n', data.serieName)
         .replace('%x', data.dataX)
+        .replace('%u', this._yUnit)
         .replace('%y', D3.format('f.1')(data.dataY));
     }
     

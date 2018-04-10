@@ -13,14 +13,15 @@ var D3=null;
     .defer(d3.csv, "./data/countryInfos.csv")
     .defer(d3.csv, "./data/pib.csv")
     .defer(d3.csv, "./data/leg.csv")
+    .defer(d3.csv, "./data/tech.csv")
     .awaitAll(function (error, results) {
         /***** Chargement des données *****/
-        if (error || results.length !== 5) {
+        if (error || results.length !== 6) {
             throw error;
         }
         var roadIncident = results[0], population = results[1], 
             countryInfos = results[2], pib = results[3],
-            leg = results[4];
+            leg = results[4], tech=results[5];
 
         /***** Prétraitement des données *****/
         var countries = preproccessCountries(countryInfos);
@@ -31,13 +32,13 @@ var D3=null;
         
         // Echelle de couleur
         var continentColors = {
-            'Amérique du Sud': '#73027',
+            'Amérique du Sud': '#d73027',
             'Amérique du Nord': '#ff2000',
             'Amérique Centrale': '#ff7f00',
             'Océanie': '#2166ac',
             'Europe Est': '#33a02c',
             'Europe Ouest': '#71c671',
-            'Moyen Orient': '#000000',
+            'Moyen Orient': '#ffff33',
             'Asie': '#ffff33',
             'Afrique': '#000000'
         };
@@ -54,6 +55,8 @@ var D3=null;
         globalMean.seriesName(d => d.pays);
         globalMean.xAxis.tickFormat(d=>d.toString());
         globalMean.on('dataDrawn', function(e){e.gData.select('.serieLine').classed('meanSerie', d=>d.pays=='MEAN');})
+        globalMean.enable(d=>d.pays=='MEAN').classed('selected',d=>d.pays=='MEAN');
+        globalMean.htmlTip(d=>'<h3>'+d.dataX+'</h3> <p><b>Mortalité moyenne: </b>'+D3.format('f.1')(d.dataY)+' / 100 000 hab.</p>');
         globalMean.data(data);
         
         
@@ -92,7 +95,7 @@ var D3=null;
         var setupFr = function(svg, name){
             var frBack = new AreaLineChart(d3.select('#SVG_'+svg), name).marginLeft(80);
             frBack.dataX(d => d.annee).xTitle('Annee').domainX([1970, 2007])
-                        .yTitle('Nombre de morts');
+                        .yTitle('Nombre de morts').domainY(d=>[0, d[1]+100]);
             frBack.xAxis.tickFormat(d=>d.toString());
             frBack.data(frData);
             
@@ -124,7 +127,7 @@ var D3=null;
         
         /*** AVANCÉES TECHNIQUES ***/
         var overlayTechnique = new ChronologicalOverlay(frTech, 'legTechnique');
-        overlayTechnique.data([{x:1982, title:'Test', info:'info'}]);
+        overlayTechnique.dataX(d=>d['Année']).dataTitle(d=>d['Titre']).dataInfo(d=>d['Text']).data(tech);
         
         
         /****************************************************************************************************/
@@ -138,7 +141,7 @@ var D3=null;
                       .seriesFilter(d=>d.pays=='MEAN')
                       .lineColor(d=>countries[d.pays]!=undefined?continentColor(countries[d.pays].continent):'#333')
                       .lineWidth(d=>d.pays=='MEAN'?0.5:1.5)
-                      .domainY([0,150]).data(data);
+                      .domainY([0,150]).domainX([1970,2005]).data(data);
         
         // Crée un scatter plot présentant la mortalité en fonction du PIB.
         var pibPlot = new ScatterPlot(d3.select('#SVG_PIB'), 'PIB');
@@ -203,27 +206,54 @@ var D3=null;
             }
         });
         
+        
+        // Barre de recherche
+        
+        var selectPIBSerie = function(s){
+            pibPlot.hoveredSerie = s;
+        }
+        var resetPIBSerie = function(){
+            pibPlot.hoveredSerie = null;
+        }
+        new SearchBar('SEARCHBAR_PIB', selectPIBSerie, resetPIBSerie, data.map(d=>d.pays), 'Rechercher un pays');
+        
         /****************************************************************************************************/
         /* Global graph */
         var global = new SimpleLineChart(d3.select('#SVG_global'), 'global');
         global.dataX(d => d.annee).xTitle('Annee')
-                    .dataY(d => d!=undefined?d['rel all']:NaN)
-                    .yTitle('Taux de Mortalité').yUnit('per 100 000 hab.');
+              .dataY(d => d!=undefined?d['rel all']:NaN)
+              .yTitle('Taux de Mortalité').yUnit('/ 100 000 hab.')
+              .lineColor(d=>countries[d.pays]!=undefined?continentColor(countries[d.pays].continent):'#333');
         global.seriesName(d => d.pays);
         global.xAxis.tickFormat(d=>d.toString());
         global.domainY(d=>[0, d[1]+10])
         global.data(data.filter(d=>d.pays!='MEAN'));
         
+        global.data().forEach(function(d){d.selected=false;});
+        
+        var toggleGlobalSerie = function(s){
+            var anySelected = false;
+            global.data().forEach(function(d){if(d.pays==s) d.selected = !d.selected; anySelected |= d.selected;});
+            global.classed('selected', d=>d.selected);
+            if(anySelected)
+                global.enable = d=>d.selected;
+            else
+                global.enable = d=>true;
+        }
         var selectGlobalSerie = function(s){
-            global.enable = d=>d.pays==s;
-            global.classed('selected', d=>d.pays==s)
+            global.data().forEach(function(d){d.selected = d.pays==s || d.selected;});
+            global.classed('selected', d=>d.selected);
+            global.enable = d=>d.selected;
         }
         var resetGlobalSerie = function(){
+            global.data().forEach(function(d){d.selected = false});
             global.enable = d=>true;
             global.classed('selected', false);
         }
         
-        new SearchBar('SEARCHBAR_global', selectGlobalSerie, resetGlobalSerie, data.map(d=>d.pays), 'Rechercher un pays');
+        global.on('click', function(){ if(global.hoveredSerie()!=null) toggleGlobalSerie(global.hoveredSerie()); });
+        
+        new SearchBar('SEARCHBAR_global', selectGlobalSerie, function(){}, data.map(d=>d.pays), 'Rechercher un pays');
         
         var globalContextPlot = new ContextLineChart(d3.select('#SVG_global_Context'), 'global_context', true);
         globalContextPlot.dataX(d=>d.annee).xTitle('Annee').xAxis.tickFormat(d=>d.toString());

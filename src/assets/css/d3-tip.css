@@ -5,6 +5,7 @@
   color: #fff;
   border-radius: 2px;
   pointer-events: none;
+  z-index: 20;
 }
 
 /* Creates a small triangle extender for the tooltip */
@@ -31,9 +32,9 @@
 /* Eastward tooltips */
 .d3-tip.e:after {
   content: "\25C0";
-  margin: -4px 0 0 0;
+  margin: -4px -1px 0 -5px;
   top: 50%;
-  left: -8px;
+  left: -50%;
 }
 
 /* Southward tooltips */

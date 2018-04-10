@@ -63,19 +63,19 @@
 /**** Toggle Switch  ****/
 .ToggleSwitch {
   position: relative;
-  width: 30px;
-  height: 17px;
   display: inline-block;
+  font-size: 10px;
+  left: -30px;
 }
 
 .ToggleSwitch input {display:none;} 
 .ToggleSwitch span{
   position: absolute;
+  margin-left: 3px;
+  top: -2px;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  width: 30px;
+  height: 17px;
   border-radius: 17px;
   background-color: #ccc;
   -webkit-transition: .4s;
@@ -98,6 +98,10 @@
 
 .ToggleSwitch input:focus + span {
   box-shadow: 0 0 1px #2196F3;
+}
+
+.ToggleSwitch input:checked + span{
+    background-color: #888;
 }
 
 .ToggleSwitch input:checked + span:before {

@@ -45,6 +45,11 @@
     top: -2px;
 }
 
+#SEARCHBAR_PIB{
+    position: absolute;
+    right: 50px;
+    top: 10%;
+}
 
 /********************************
  *      VII. GLOBAL             *
