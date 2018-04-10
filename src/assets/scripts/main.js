@@ -241,6 +241,7 @@ var D3=null;
             t+= '</p>';
             return t;
         });
+        global.tip.direction('n').offset([-10, 0]);
         
         global.data(data.filter(d=>d.pays!='MEAN'));
         
@@ -268,7 +269,7 @@ var D3=null;
         
         global.on('click', function(){ if(global.hoveredSerie()!=null) toggleGlobalSerie(global.hoveredSerie()); });
         
-        new SearchBar('SEARCHBAR_global', selectGlobalSerie, function(){}, data.map(d=>d.pays), 'Rechercher un pays');
+        new SearchBar('SEARCHBAR_global', selectGlobalSerie, function(){}, data.map(d=>d.pays), 'Rechercher un pays', resetGlobalSerie);
         
         var globalContextPlot = new ContextLineChart(d3.select('#SVG_global_Context'), 'global_context', true);
         globalContextPlot.dataX(d=>d.annee).xTitle('Annee').xAxis.tickFormat(d=>d.toString());

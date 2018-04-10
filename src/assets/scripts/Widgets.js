@@ -1,15 +1,19 @@
 class SearchBar{
-    constructor(selector, validate, reset, values, placeholder=''){
+    constructor(selector, validate, reset, values, placeholder='', resetAll=null){
         var self=this;
         if(selector[0]!='#')
             selector = '#'+selector;
         D3.select(selector).append('input').attr('title', 'search-input').attr('type', 'text').attr('placeholder', placeholder);
-        D3.select(selector).append('button').attr('title', 'Rechercher')
+        D3.select(selector).append('button').classed('searchButton', true).attr('title', 'Rechercher')
                                .append('img').attr('alt', 'Rechercher').attr('src', './assets/img/search.svg');
+        if(resetAll)
+            D3.select(selector).append('button').classed('resetButton', true).attr('title', 'Réinitialise')
+                               .append('img').attr('alt', 'Réinitialise').attr('src', './assets/img/reset.svg');
 
         this.validate = validate;
         this.reset = reset;
         this.values = values;
+        this.resetAll = resetAll;
                                
         new autoComplete({
             selector: selector+" input",
@@ -45,8 +49,11 @@ class SearchBar{
                 self.searchBarInput.classed("error", false);
             }
         });
-        D3.select(selector+" button")
+        D3.select(selector+" .searchButton")
             .on("click", function(){self.validateInput});
+        if(resetAll)
+            D3.select(selector+" .resetButton")
+                .on("click", function(){self.resetAll()});
     }
 
       /**
