@@ -110,3 +110,7 @@
   transform: translateX(13px);
 }
 
+/**** Circle Legend  ****/
+.values-labels-wrap text{
+    font-size: 9px;
+}

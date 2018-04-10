@@ -169,6 +169,17 @@ var D3=null;
         var year = pibContextPlot.cursorX();
         pibPlot.backgroundLabel(year).data(selectYear(year, data));
         
+        // Légende Aire
+        circleLegend(d3.select('#PIB_areaLegend'))
+            .domain(pibPlot.r.domain())
+            .range(pibPlot.r.range())
+            .values([0.5, 4, 10])
+            .width(70)
+            .height(70)
+            .textPadding(23)
+            .render();
+        console.log(pibPlot.r.range())
+        
         // Mets à jour le graphe lorsque la position du curseur change
         pibContextPlot.on('cursorXChanged', function(e){
             var x = Math.ceil(e.cursorX-0.1);
@@ -217,7 +228,7 @@ var D3=null;
         var resetPIBSerie = function(){
             pibPlot.hoveredSerie = null;
         }
-        new SearchBar('SEARCHBAR_PIB', selectPIBSerie, resetPIBSerie, data.map(d=>d.pays), 'Rechercher un pays');
+        new SearchBar('SEARCHBAR_PIB', selectPIBSerie, resetPIBSerie, data.filter(d=>d.pays!='MEAN').map(d=>d.pays), 'Rechercher un pays');
         
         /****************************************************************************************************/
         /* Global graph */
@@ -247,35 +258,42 @@ var D3=null;
         
         global.data().forEach(function(d){d.selected=false;});
         
-        var toggleGlobalSerie = function(s){
-            var anySelected = false;
-            global.data().forEach(function(d){if(d.pays==s) d.selected = !d.selected; anySelected |= d.selected;});
+        var updateSelected = function(){
+            var selected = [];
+            global.data().forEach(function(d){if(d.selected) selected.push(d.pays);});
             global.classed('selected', d=>d.selected);
-            if(anySelected)
+            
+            if(selected.length)
                 global.enable = d=>d.selected;
             else
                 global.enable = d=>true;
+            
+            globalContextPlot.seriesFilter(d=>d.pays=='MEAN' || selected.includes(d.pays));
+        }
+        
+        var toggleGlobalSerie = function(s){
+            global.data().forEach(function(d){if(d.pays==s) d.selected = !d.selected;});
+            updateSelected();
         }
         var selectGlobalSerie = function(s){
-            global.data().forEach(function(d){d.selected = d.pays==s || d.selected;});
-            global.classed('selected', d=>d.selected);
-            global.enable = d=>d.selected;
+            global.data().forEach(function(d){d.selected |= d.pays==s;});
+            updateSelected();
         }
         var resetGlobalSerie = function(){
             global.data().forEach(function(d){d.selected = false});
-            global.enable = d=>true;
-            global.classed('selected', false);
+            updateSelected();
         }
         
         global.on('click', function(){ if(global.hoveredSerie()!=null) toggleGlobalSerie(global.hoveredSerie()); });
         
-        new SearchBar('SEARCHBAR_global', selectGlobalSerie, function(){}, data.map(d=>d.pays), 'Rechercher un pays', resetGlobalSerie);
+        new SearchBar('SEARCHBAR_global', selectGlobalSerie, function(){}, data.filter(d=>d.pays!='MEAN').map(d=>d.pays), 'Rechercher un pays', resetGlobalSerie);
         
         var globalContextPlot = new ContextLineChart(d3.select('#SVG_global_Context'), 'global_context', true);
         globalContextPlot.dataX(d=>d.annee).xTitle('Annee').xAxis.tickFormat(d=>d.toString());
-        globalContextPlot.dataY(d=>d['abs all']);
+        globalContextPlot.dataY(d=>d['rel all']).domainY(d=>[0,d[1]]);
         globalContextPlot.seriesName(d=>d.pays)
                       .seriesFilter(d=>d.pays=='MEAN')
+                      .lineColor(d=>countries[d.pays]!=undefined?continentColor(countries[d.pays].continent):'#333')
                       .data(data);
         globalContextPlot.on('brushend', function(e){global.domainX(globalContextPlot.focusDomain());});
         
