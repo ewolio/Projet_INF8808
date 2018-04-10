@@ -141,7 +141,9 @@ var D3=null;
                       .seriesFilter(d=>d.pays=='MEAN')
                       .lineColor(d=>countries[d.pays]!=undefined?continentColor(countries[d.pays].continent):'#333')
                       .lineWidth(d=>d.pays=='MEAN'?0.5:1.5)
-                      .domainY([0,150]).domainX([1970,2005]).data(data);
+                      .domainY([0,150]).domainX([1970,2005])
+                      .animDuration(0)
+                      .data(data);
         
         // Crée un scatter plot présentant la mortalité en fonction du PIB.
         var pibPlot = new ScatterPlot(d3.select('#SVG_PIB'), 'PIB');
@@ -227,6 +229,19 @@ var D3=null;
         global.seriesName(d => d.pays);
         global.xAxis.tickFormat(d=>d.toString());
         global.domainY(d=>[0, d[1]+10])
+        global.htmlTip(function(d){
+            var t = '<h3>' + d.dataX + '</h3>';
+            t += '<p>';
+            t += '<b>'+ d.serieName + ': </b>' + d3.format('f.1')(d.dataY) + ' / 100 000 hab.<br /><br />';
+            global.data().forEach(function(e){
+                if(e.selected && e.pays!=d.serieName){
+                    t +=  e.pays + ': ' + d3.format('f.1')(e.data.filter(h=>h.annee==d.dataX)[0]['rel all']) + ' / 100 000 hab.<br />';
+                }
+            });
+            t+= '</p>';
+            return t;
+        });
+        
         global.data(data.filter(d=>d.pays!='MEAN'));
         
         global.data().forEach(function(d){d.selected=false;});
