@@ -79,7 +79,7 @@ class ScatterPlot extends ChartArea2D{
             var p = dotsData[argmin(dotsData.map(distance))];
             
             if(distance(p) < 25**2){
-                dots.classed('hovered', false);
+                dots.classed('hovered', d=>this._seriesName(d)==this._seriesName(p));
                 var hoveredDots = dots.filter(d=>self._seriesName(d)==self._seriesName(p));
                 
                 this.emit('dataHovered', [{d:hoveredDots.datum(), nearest: p, mousePos: mousePos}]);
