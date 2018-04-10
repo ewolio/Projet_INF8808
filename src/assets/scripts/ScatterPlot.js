@@ -37,7 +37,8 @@ class ScatterPlot extends ChartArea2D{
                      
         dots.exit().remove(); // Remove old lines
         var newLines = dots.enter().append('circle').classed('chartDot', true)
-                                   .attr('serie', d=>this._seriesName(d));
+                                   .attr('serie', d=>this._seriesName(d))
+                                   .style('fill', this._dotColor);
          
         var self = this;
         dots.classed('hovered', d=>this._seriesName(d)==this._hoveredSerie)
@@ -47,7 +48,7 @@ class ScatterPlot extends ChartArea2D{
             .attr('r', function(d){ var r = self._dataR(self._seriesData(d)[0]); return notNaN(r)? self.r(r) : undefined; })
             .attr('cx', function(d){ var x = self._dataX(self._seriesData(d)[0]); return notNaN(x)? self.x(x) : undefined; })
             .attr('cy', function(d){ var y = self._dataY(self._seriesData(d)[0]); return notNaN(y)? self.y(y) : undefined; })
-            .attr('fill', this._dotColor)
+            .style('fill', this._dotColor)
             .each('end', function(){dots.attr('visibility', d=>(notNaN(self._dataR(self._seriesData(d)[0]))&&
                                                     notNaN(self._dataX(self._seriesData(d)[0]))&&
                                                     notNaN(self._dataY(self._seriesData(d)[0])) )?'visible':'hidden')});

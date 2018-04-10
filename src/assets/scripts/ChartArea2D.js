@@ -133,7 +133,7 @@ class ChartArea2D extends D3CustomChart{
         else
             this.gXAxis.select('text').html('<tspan class="axisTitleText">'+this._xTitle+'</tspan>');
             
-        this.gYAxis.select('.axisTitle').attr('transform', 'translate(-50, '+(this.height/2)+')rotate(-90)');
+        this.gYAxis.select('.axisTitle').attr('transform', 'translate('+(15-this._marginLeft).toString()+', '+(this.height/2+50)+')rotate(-90)');
         if(this._yUnit!='')
             this.gYAxis.select('text').html('<tspan class="axisTitleText">'+this._yTitle+'</tspan> <tspan class="axisUnitText"> ('+this._yUnit+')</tspan>');
         else

@@ -13,6 +13,13 @@ class AreaLineChart extends SimpleLineChart{
                         .interpolate("cardinal");
                         
         this.chainableFunctionProperty('areaColor', d => d.color!==undefined ? d.color : '#444', 'draw');
+        this.on('hoveredSerieChanged', function(e){
+            var areas = self.gRoot.selectAll('path.serieArea');
+            if(e.hoveredSerie!=null)
+                areas.classed('hovered', d=>self._seriesName(d)==e.hoveredSerie);
+            else
+                areas.classed('hovered', false);
+        });
     }
     
     drawData(g, data){

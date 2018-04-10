@@ -30,7 +30,7 @@ var D3=null;
         console.log(countries);
         
         // Echelle de couleur
-        var continentColor = {
+        var continentColors = {
             'Amérique du Sud': '#73027',
             'Amérique du Nord': '#ff2000',
             'Amérique Centrale': '#ff7f00',
@@ -41,6 +41,7 @@ var D3=null;
             'Asie': '#ffff33',
             'Afrique': '#000000'
         };
+        var continentColor = c => c in continentColors ? continentColors[c] : '#333';
         
         /***** Création des Graphes *****/
     
@@ -58,6 +59,8 @@ var D3=null;
         
         /****************************************************************************************************/
         /* FRANCE */        
+        
+        // function pour sélectionner la mortalité par tranche d'age pour un pays
         var selectCountryData = function(country, prefix, cumul=true){
             var items = ['00-14', '15-29', '30-44', '45-59', '60+'];
             var dataOut = [];
@@ -82,10 +85,12 @@ var D3=null;
             return dataOut;
         }
         
+        // Lit la mortalité absolue par tranche d'age non cumulée
         var frData = selectCountryData('France', 'abs ', false);
         
+        // Fonction qui génère le area chart sans les évenements
         var setupFr = function(svg, name){
-            var frBack = new AreaLineChart(d3.select('#SVG_'+svg), name);
+            var frBack = new AreaLineChart(d3.select('#SVG_'+svg), name).marginLeft(80);
             frBack.dataX(d => d.annee).xTitle('Annee').domainX([1970, 2007])
                         .yTitle('Nombre de morts');
             frBack.xAxis.tickFormat(d=>d.toString());
@@ -108,6 +113,7 @@ var D3=null;
             return frBack;
         }
         
+        // Génère les graphes sur les 3 slides qui se concentre sur la france
         var fr = setupFr('france', 'france');
         var frLeg = setupFr('legislation', 'legislation');
         var frTech = setupFr('techniques', 'techniques');
@@ -123,20 +129,26 @@ var D3=null;
         
         /****************************************************************************************************/
         /* PIB */
+        
+        // Crée la "frise chronologique" de sélection de l'année
         var pibContextPlot = new ContextLineChart(d3.select('#SVG_PIB_Context'), 'PIB_Context');
         pibContextPlot.dataX(d=>d.annee).xTitle('Annee').xAxis.tickFormat(d=>d.toString());
         pibContextPlot.dataY(d=>d['rel all']);
         pibContextPlot.seriesName(d=>d.pays)
                       .seriesFilter(d=>d.pays=='MEAN')
+                      .lineColor(d=>countries[d.pays]!=undefined?continentColor(countries[d.pays].continent):'#333')
+                      .lineWidth(d=>d.pays=='MEAN'?0.5:1.5)
                       .domainY([0,150]).data(data);
         
+        // Crée un scatter plot présentant la mortalité en fonction du PIB.
         var pibPlot = new ScatterPlot(d3.select('#SVG_PIB'), 'PIB');
         pibPlot.dataX(d=>d['rel pib']/1000).xTitle('PIB').xUnit('$kUS/hab.').domainX([0, 60])
                .dataY(d=>d['rel all']).yTitle('Taux de Mortalité').yUnit('/ 100 000 hab.').yTitleShort('Mortalité').domainY([0, 150])
-               .dotColor(d => continentColor[countries[d.pays].continent])
+               .dotColor(d => continentColor(countries[d.pays].continent))
                .dataR(d=>d['abs all']);
         pibPlot.seriesName(d=>d.pays);
         
+        // Extrait les PIB/mortalité pour tous les pays, pour une année y
         var selectYear = function(y, data){
             var result = [];
             data.forEach(function(dPays){
@@ -152,6 +164,7 @@ var D3=null;
         var year = pibContextPlot.cursorX();
         pibPlot.backgroundLabel(year).data(selectYear(year, data));
         
+        // Mets à jour le graphe lorsque la position du curseur change
         pibContextPlot.on('cursorXChanged', function(e){
             var x = Math.ceil(e.cursorX-0.1);
             if(x!=year){
@@ -162,12 +175,13 @@ var D3=null;
                 year = x;
             }
         });
+        // Arrête l'animation lorsque le cursor atteint la dernière année
         pibContextPlot.on('reachEnd', function(){
             var b = D3.select('#PIB_play i');
             b.classed('fa-pause', false);
             b.classed('fa-play', true);
         });
-        
+        // Affiche la courbe d'un pays lorsqu'il est pointer par la souris dans le ScatterPlot
         pibPlot.on('hoveredSerieChanged', function(e){
             if(e!=null)
                 pibContextPlot.seriesFilter(d=>(d.pays=='MEAN' || d.pays==e.hoveredSerie));
@@ -175,6 +189,7 @@ var D3=null;
                 pibContextPlot.seriesFilter(d=>d.pays=='MEAN');
         });
         
+        // Crée un bouton play/pause (les icones proviennent de Font Awesome)
         D3.select('#PIB_play').on('click', function(){
             var b = D3.select('#PIB_play i');
             if(b.classed('fa-play')){
@@ -188,6 +203,7 @@ var D3=null;
             }
         });
         
+        /****************************************************************************************************/
         /* Global graph */
         var global = new SimpleLineChart(d3.select('#SVG_global'), 'global');
         global.dataX(d => d.annee).xTitle('Annee')

@@ -50,13 +50,16 @@ class SimpleLineChart extends ChartArea2D{
 
         lines.exit().remove(); // Remove old lines
         var newLines = lines.enter().append('path').classed('serieLine', true)
-                                    .attr('fill', 'none')
-                                    .attr('clip-path', 'url(#clipPath'+this.name+')');
+                                    .style('fill', 'none')
+                                    .attr('clip-path', 'url(#clipPath'+this.name+')')
+                                    .style('stroke', this._lineColor)
+                                    .style('stroke-width', this._lineWidth)
+                                    .attr('d', d => this.d3Line(this._seriesData(d).filter(d2=>notNaN(this._dataX(d2)) && notNaN(this._dataY(d2)))));
         var self = this;
         lines.transition().duration(this._animDuration)
              .attr('d', d => this.d3Line(this._seriesData(d).filter(d2=>notNaN(this._dataX(d2)) && notNaN(this._dataY(d2)))))
-             .attr('stroke', this._lineColor)
-             .attr('stroke-width', this._lineWidth);
+             .style('stroke', this._lineColor)
+             .style('stroke-width', this._lineWidth);
         lines.classed('disabled', d=>!this._enable(d));
         lines.classed('hovered', d=>this._seriesName(d)==this._hoveredSerie);
         
