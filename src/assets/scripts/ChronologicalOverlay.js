@@ -56,7 +56,7 @@ class ChronologicalOverlay extends D3CustomChart{
         circleHats.exit().remove(); // Remove old lines
         var newHat = circleHats.enter().append('circle').classed('hat', true)
                                       .attr('fill', 'none')
-                                      .attr('r', 5)
+                                      .attr('r', 7)
                                       .attr('cy', 0)
                                       .on('mouseover', self.tip.show)
                                       .on('mouseout', self.tip.hide);
