@@ -47,7 +47,7 @@ var D3=null;
         /***** Création des Graphes *****/
     
         /****************************************************************************************************/
-        /* GLOBAL MEAN */
+        /* GLOBAL MEAN 
         var globalMean = new SimpleLineChart(d3.select('#SVG_globalMean'), 'globalMean');
         globalMean.dataX(d => d.annee).xTitle('Annee')
                     .dataY(d => d!=undefined?d['rel all']:NaN)
@@ -262,6 +262,26 @@ var D3=null;
                       .seriesFilter(d=>d.pays=='MEAN')
                       .data(data);
         globalContextPlot.on('brushend', function(e){global.domainX(globalContextPlot.focusDomain());});
+        
+        /****************************************************************************************************/
+        /* Lien texte */
+        var GRAPHES = {
+            'fr': fr,
+            'frLeg': frLeg,
+            'frTech': frTech,
+            'overlayLegislation': overlayLegislation,
+            'overlayTechnique': overlayTechnique,
+            'PIB': pibPlot,
+            'global': global
+        }
+        
+        d3.selectAll('.graphRef').each(function(){
+            var link = d3.select(this).attr('data-link').split('.');
+            var g = GRAPHES[link[0]];
+            console.log(link, g);
+            d3.select(this).on('mouseenter', function(){g.hoveredSerie = link[1];})
+                           .on('mouseout', function(){g.hoveredSerie = null;});
+        });
     });
 
 })(d3, searchBar);

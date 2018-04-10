@@ -46,6 +46,11 @@ body {
     text-align: justify;
 }
 
+.graphRef{
+    color: #888;
+    
+}
+
 /***** Side Style *****/
 .graphSide{
     position: absolute;
