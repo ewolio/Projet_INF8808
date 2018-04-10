@@ -122,7 +122,7 @@ jQuery(document).ready(function($){
     function captureScrolling(){
         // Scroll
         var delta = 0;
-        var SCROLL_THRESHOLD = 1;
+        var SCROLL_THRESHOLD = 2;
         
         $(window).on('DOMMouseScroll mousewheel', function(event) {
             // on mouse scroll - check if animate section
